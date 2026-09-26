@@ -1,12 +1,6 @@
-export function normalize(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/\s+/g, ' ')
-    .trim()
-}
+import { normalize } from '../../shared/text.mjs'
+
+export { normalize }
 
 export function truncateAtWord(text: string, max: number): string {
   const clean = text.replace(/\s+/g, ' ').trim()

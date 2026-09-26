@@ -1,17 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import type { Analysis, AnalysisSource, AppState, SupportReason } from './lib/types'
-import { analyzeThoughts, fetchAiAvailable } from './lib/analysis'
-import { mentionsNewOrWorseningSymptoms, needsHumanSupport } from './lib/safety'
+import type { AppState, GroundingContent, SupportReason } from './lib/types'
+import { fetchAiAvailable, requestGrounding } from './lib/grounding'
+import { supportReason as detectSupportReason } from './lib/safety'
 import { HelpDialog } from './components/HelpDialog'
 import { Welcome } from './screens/Welcome'
 import { Write } from './screens/Write'
-import { Organizing } from './screens/Organizing'
-import { Organized } from './screens/Organized'
 import { Grounding } from './screens/Grounding'
-import { Finished } from './screens/Finished'
 import { HumanSupport } from './screens/HumanSupport'
 
-const ORGANIZE_MIN_MS = 800
+const MIN_WAIT_MS = 800
 const SLOW_NOTICE_MS = 1500
 
 function prefersReducedMotion() {
@@ -21,75 +18,56 @@ function prefersReducedMotion() {
 export default function App() {
   const [state, setState] = useState<AppState>('welcome')
   const [text, setText] = useState('')
-  const [analysis, setAnalysis] = useState<Analysis | null>(null)
-  const [source, setSource] = useState<AnalysisSource>('local')
+  const [content, setContent] = useState<GroundingContent | null>(null)
   const [supportReason, setSupportReason] = useState<SupportReason>('urgent')
   const [aiAvailable, setAiAvailable] = useState(false)
   const [helpOpen, setHelpOpen] = useState(false)
   const [slow, setSlow] = useState(false)
-  const [liveMessage, setLiveMessage] = useState('')
   const run = useRef(0)
 
   useEffect(() => {
     fetchAiAvailable().then(setAiAvailable)
   }, [])
 
-  const announce = useCallback((message: string) => {
-    setLiveMessage('')
-    requestAnimationFrame(() => setLiveMessage(message))
-  }, [])
-
   const reset = useCallback(() => {
     run.current += 1
     setText('')
-    setAnalysis(null)
+    setContent(null)
     setSlow(false)
   }, [])
 
-  const organize = useCallback(async () => {
+  const showSupport = useCallback(
+    (reason: SupportReason) => {
+      setSupportReason(reason)
+      reset()
+      setState('human-support')
+    },
+    [reset],
+  )
+
+  const submit = useCallback(async () => {
     const current = text.trim()
     if (!current) return
 
-    if (needsHumanSupport(current)) {
-      setSupportReason('urgent')
-      reset()
-      setState('human-support')
-      return
-    }
-    if (mentionsNewOrWorseningSymptoms(current)) {
-      setSupportReason('symptoms')
-      reset()
-      setState('human-support')
-      return
-    }
+    const reason = detectSupportReason(current)
+    if (reason) return showSupport(reason)
 
     const id = ++run.current
-    setState('organizing')
+    setText('')
+    setContent(null)
     setSlow(false)
+    setState('grounding')
     const slowTimer = window.setTimeout(() => setSlow(true), SLOW_NOTICE_MS)
-    const minDelay = new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : ORGANIZE_MIN_MS))
+    const minDelay = new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : MIN_WAIT_MS))
 
-    const [result] = await Promise.all([analyzeThoughts(current, { useAi: aiAvailable }), minDelay])
+    const [result] = await Promise.all([requestGrounding(current, { useAi: aiAvailable }), minDelay])
     window.clearTimeout(slowTimer)
     if (id !== run.current) return
 
-    if (result.analysis.human_support) {
-      setSupportReason('urgent')
-      reset()
-      setState('human-support')
-      return
-    }
-
-    setAnalysis(result.analysis)
-    setSource(result.source)
-    setState('organized')
-    announce('Your thoughts have been organised into two areas: Can do and Cannot know yet.')
-  }, [text, aiAvailable, reset, announce])
-
-  const finish = () => {
-    reset()
-    setState('finished')
-  }
+    if (result.kind === 'support') return showSupport(result.reason)
+    setSlow(false)
+    setContent(result.content)
+  }, [text, aiAvailable, showSupport])
 
   const restart = () => {
     reset()
@@ -100,7 +78,7 @@ export default function App() {
     <div className="app">
       <header className="topbar">
         <span className="wordmark">SoftLanding</span>
-        {!['welcome', 'grounding', 'human-support'].includes(state) && (
+        {state === 'write' && (
           <button type="button" className="link link--small" onClick={() => setHelpOpen(true)}>
             Help now
           </button>
@@ -114,31 +92,15 @@ export default function App() {
             text={text}
             aiAvailable={aiAvailable}
             onChange={setText}
-            onSubmit={organize}
+            onSubmit={submit}
             onBack={() => setState('welcome')}
           />
         )}
-        {state === 'organizing' && <Organizing text={text} slow={slow} />}
-        {state === 'organized' && analysis && (
-          <Organized
-            analysis={analysis}
-            source={source}
-            aiAvailable={aiAvailable}
-            announce={announce}
-            onExit={() => {
-              reset()
-              setState('grounding')
-            }}
-          />
+        {state === 'grounding' && (
+          <Grounding content={content} slow={slow} onClose={restart} onHelp={() => setHelpOpen(true)} />
         )}
-        {state === 'grounding' && <Grounding onClose={finish} onHelp={() => setHelpOpen(true)} />}
-        {state === 'finished' && <Finished onRestart={restart} />}
         {state === 'human-support' && <HumanSupport reason={supportReason} onRestart={restart} />}
       </main>
-
-      <div className="visually-hidden" aria-live="polite" role="status">
-        {liveMessage}
-      </div>
 
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>

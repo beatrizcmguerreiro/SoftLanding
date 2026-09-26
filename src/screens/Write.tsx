@@ -1,8 +1,8 @@
 import { useState, type FormEvent } from 'react'
-import { LIMITS } from '../lib/analysis'
+import { LIMITS } from '../lib/grounding'
 import { useFocusOnMount } from '../components/useFocusOnMount'
 
-export const DEMO_TEXT = "What if the result is serious? I don't even know when it arrives and I keep searching."
+export const DEMO_TEXT = "What if the result is serious? I can't stop searching online."
 
 type Props = {
   text: string
@@ -77,8 +77,8 @@ export function Write({ text, aiAvailable, onChange, onSubmit, onBack }: Props) 
 
         <p className="fineprint fineprint--left">
           {aiAvailable
-            ? 'When you continue, your text is sent to an external AI service (Anthropic) only to be organised. We don’t store it. In this demo, use fictional text.'
-            : 'Your text is organised on this device and is not sent or stored.'}
+            ? 'When you continue, your text is sent to an external AI service (Anthropic) only to shape a short grounding exercise. We don’t store it. In this demo, use fictional text.'
+            : 'Your text stays on this device and is not sent or stored.'}
         </p>
 
         <div className="actions">
