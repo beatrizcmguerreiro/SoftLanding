@@ -1,37 +1,82 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { fallbackGrounding, validateGrounding, type GroundingExperience } from '../shared/grounding.mjs'
 import { acceptSuggestion } from '../shared/organised.mjs'
 import { needsHumanSupport, mentionsNewOrWorseningSymptoms } from './lib/safety'
+import { onPreviewCommand, previewExperience, readPreview, type PreviewCommand } from './lib/preview'
 import { HelpDialog } from './components/HelpDialog'
 import { Welcome } from './screens/Welcome'
 import { Feeling } from './screens/Feeling'
-import { Write } from './screens/Write'
+import { DEMO_TEXT, Write } from './screens/Write'
 import { Grounding } from './screens/Grounding'
 import { HumanSupport } from './screens/HumanSupport'
 import type { SupportReason } from './lib/types'
 
+const preview = readPreview()
+
 export default function App() {
-  const [screen, setScreen] = useState<'welcome' | 'feeling' | 'write' | 'grounding' | 'support'>('welcome')
-  const [feeling, setFeeling] = useState('Unsure')
-  const [text, setText] = useState('')
-  const [experience, setExperience] = useState<GroundingExperience | null>(null)
-  const [suggestion, setSuggestion] = useState<string | null>(null)
-  const [groundingStep, setGroundingStep] = useState(0)
-  const [support, setSupport] = useState<SupportReason>('urgent')
+  const [screen, setScreen] = useState(preview.screen ?? 'welcome')
+  const [feeling, setFeeling] = useState(preview.feeling ?? 'Unsure')
+  const [text, setText] = useState(preview.animate ? '' : preview.text ?? '')
+  const [experience, setExperience] = useState<GroundingExperience | null>(preview.screen === 'grounding' ? previewExperience(preview.text) : null)
+  const [suggestion, setSuggestion] = useState<string | null>(preview.suggestion ?? null)
+  const [groundingStep, setGroundingStep] = useState(preview.step ?? 0)
+  const [support, setSupport] = useState<SupportReason>(preview.support ?? 'urgent')
   const [helpOpen, setHelpOpen] = useState(false)
   const [busy, setBusy] = useState(false)
   const request = useRef<AbortController | null>(null)
+  const typing = useRef<number | null>(null)
+
+  const stopTyping = () => {
+    if (typing.current) {
+      window.clearInterval(typing.current)
+      typing.current = null
+    }
+  }
+  const typeText = (full: string) => {
+    stopTyping()
+    setText('')
+    let index = 0
+    typing.current = window.setInterval(() => {
+      index += 1
+      setText(full.slice(0, index))
+      if (index >= full.length) stopTyping()
+    }, 45)
+  }
 
   const reset = () => {
     request.current?.abort()
     request.current = null
+    stopTyping()
     setText('')
     setFeeling('Unsure')
     setExperience(null)
     setSuggestion(null)
+    setGroundingStep(0)
     setBusy(false)
     setScreen('welcome')
   }
+
+  useEffect(() => {
+    const apply = (command: PreviewCommand) => {
+      if (command.reset) {
+        reset()
+        return
+      }
+      if (command.feeling) setFeeling(command.feeling)
+      if (command.suggestion !== undefined) setSuggestion(command.suggestion)
+      if (command.step !== undefined) setGroundingStep(command.step)
+      if (command.support) setSupport(command.support)
+      if (command.screen === 'grounding') setExperience(previewExperience(command.text))
+      if (command.screen === 'write' && command.animate) typeText(command.text || DEMO_TEXT)
+      else if (command.text !== undefined) {
+        stopTyping()
+        setText(command.text)
+      }
+      if (command.screen) setScreen(command.screen)
+    }
+    if (preview.animate && preview.screen === 'write') typeText(preview.text || DEMO_TEXT)
+    return onPreviewCommand(apply)
+  }, [])
   const showSupport = (reason: SupportReason) => {
     setSupport(reason)
     setText('')
