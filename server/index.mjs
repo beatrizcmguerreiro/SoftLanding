@@ -4,6 +4,9 @@ import { extname, join, normalize } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { apiMiddleware, aiEnabled } from './analyze.mjs'
 
+// Environment variables win; a local, ignored .env is a convenience for running the demo.
+try { process.loadEnvFile() } catch { /* No .env file present. */ }
+
 const root = fileURLToPath(new URL('../dist/', import.meta.url))
 const port = Number(process.env.PORT) || 4173
 const api = apiMiddleware()

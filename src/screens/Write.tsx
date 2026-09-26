@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { ThoughtDeck } from '../components/ThoughtDeck'
 import { LIMITS } from '../lib/analysis'
+import { useDictation } from '../lib/useDictation'
 import { useFocusOnMount } from '../components/useFocusOnMount'
 
 export const DEMO_TEXT = "What if the result is serious? I don't even know when it arrives and I keep searching."
@@ -14,54 +15,19 @@ type Props = {
   onSkip: () => void
 }
 
-type Dictation = {
-  lang: string; continuous: boolean; interimResults: boolean
-  start: () => void; stop: () => void; abort: () => void
-  onresult: ((event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null
-  onerror: (() => void) | null; onend: (() => void) | null
-}
-type SpeechWindow = Window & { SpeechRecognition?: new () => Dictation; webkitSpeechRecognition?: new () => Dictation }
-
 export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
   const heading = useFocusOnMount<HTMLHeadingElement>()
   const [error, setError] = useState(false)
   const exampleIndex = useRef(0)
-  const [listening, setListening] = useState(false)
-  const [speechMessage, setSpeechMessage] = useState('')
-  const speech = useRef<Dictation | null>(null)
-  const Speech = (window as SpeechWindow).SpeechRecognition ?? (window as SpeechWindow).webkitSpeechRecognition
-  useEffect(() => () => {
-    if (speech.current) {
-      speech.current.onresult = null
-      speech.current.onerror = null
-      speech.current.onend = null
-      speech.current.abort()
-    }
-  }, [])
-  const dictate = () => {
-    if (listening) { speech.current?.stop(); return }
-    if (!Speech) { setSpeechMessage('You can use your keyboard’s microphone to dictate in this browser.'); return }
-    const recognition = new Speech()
-    speech.current = recognition
-    recognition.lang = 'en-GB'
-    recognition.continuous = false
-    recognition.interimResults = true
-    const before = text.trim()
-    recognition.onresult = event => {
-      const transcript = Array.from(event.results).map(result => result[0].transcript).join(' ')
-      onChange([before, transcript].filter(Boolean).join(' ').slice(0, LIMITS.input))
-      setError(false)
-    }
-    recognition.onerror = () => { setListening(false); setSpeechMessage('Dictation couldn’t start. You can type or use your device’s dictation instead.') }
-    recognition.onend = () => setListening(false)
-    try { recognition.start(); setListening(true); setSpeechMessage('') }
-    catch { setSpeechMessage('Dictation isn’t available right now. You can still type.'); setListening(false) }
-  }
+  const { listening, transcribing, message: speechMessage, toggle: dictate } = useDictation(value => {
+    onChange(value)
+    if (value.trim()) setError(false)
+  })
   const nearLimit = text.length >= LIMITS.input * 0.8
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
-    if (busy || listening) return
+    if (busy || listening || transcribing) return
     if (!text.trim()) {
       setError(true)
       document.getElementById('thoughts')?.focus()
@@ -81,8 +47,8 @@ export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
         </p>
 
         <div className={`field${error ? ' field--error' : ''}`}>
-          <ThoughtDeck text={text} disabled={busy || listening} error={error}
-            onDictate={dictate} listening={listening} busy={busy}
+          <ThoughtDeck text={text} disabled={busy || listening || transcribing} error={error}
+            onDictate={dictate} listening={listening} transcribing={transcribing} busy={busy}
             describedBy={`thoughts-help${error ? ' thoughts-error' : ''}${nearLimit ? ' thoughts-count' : ''}`}
             onChange={value => { onChange(value); if (value.trim()) setError(false) }} />
           <div className="field__meta">
@@ -100,20 +66,20 @@ export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
         </div>
 
         <div className="write-tools">
-          <button type="button" className="btn btn--secondary" disabled={busy || listening} onClick={() => {
+          <button type="button" className="btn btn--secondary" disabled={busy || listening || transcribing} onClick={() => {
             onChange(EXAMPLES[exampleIndex.current])
             exampleIndex.current = (exampleIndex.current + 1) % EXAMPLES.length
             setError(false)
           }}>Use example</button>
         </div>
-        <p className="visually-hidden" role="status">{listening ? 'Listening…' : speechMessage}</p>
+        <p className="visually-hidden" role="status">{listening ? 'Listening…' : transcribing ? 'Writing down your words…' : speechMessage}</p>
 
         <p className="fineprint fineprint--left">
-          {speechMessage || 'Your words aren’t saved by SoftLanding.'}
+          {speechMessage || 'Your words aren’t saved by SoftLanding. Dictation sends the recording to ElevenLabs to be written down.'}
         </p>
 
         <div className="actions">
-          <button type="submit" className="btn btn--primary" disabled={busy || listening}>
+          <button type="submit" className="btn btn--primary" disabled={busy || listening || transcribing}>
             {busy ? 'Making a little space…' : 'Continue'}
           </button>
           <span className="visually-hidden" role="status">{busy ? 'Preparing your grounding moment.' : ''}</span>
