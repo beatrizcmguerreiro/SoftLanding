@@ -910,9 +910,8 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .closing-checkin__dot { color: #c3b8d0; padding: 0 2px; }
 .closing-checkin__option { appearance: none; border: 0; background: transparent; padding: 8px 10px; min-height: 44px; border-radius: 999px; color: #83798c; font-size: 14px; cursor: pointer; }
 .closing-checkin__option[aria-checked="true"] { color: #7560ac; background: #e6dffa; }
-.closing-again { align-self: center; margin: 0 0 12px; padding: 8px 4px; min-height: 44px; border: 0; background: transparent; color: #8a8294; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
-.closing-again:hover { color: #6d627c; }
-.grounding-scene--done .companion { flex: 0 1 200px; max-height: 200px; }
+.grounding-scene--done .grounding-controls { gap: 10px; }
+.grounding-scene--done .companion { flex: 0 1 180px; max-height: 180px; }
 
 /* The writing step stays inside the screen. The card shrinks instead of scrolling the page. */
 html:has(.write-screen),

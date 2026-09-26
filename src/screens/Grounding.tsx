@@ -57,7 +57,7 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
         )}
         <div className="grounding-controls">
           {done ? <>
-            <button type="button" className="closing-again" onClick={replay}>Try another grounding moment</button>
+            <button type="button" className="btn btn--comfort" onClick={replay}>Try another grounding moment</button>
             <button type="button" className="btn btn--primary" onClick={onClose}>Back to home.</button>
           </> : <>
             <button className="btn btn--comfort" onClick={() => setStep(step + 1)}>Guide me on!</button>
