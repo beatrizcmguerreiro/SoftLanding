@@ -903,6 +903,17 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .btn--comfort { background: #e9e2f5; color: #8065bf; border: 1px solid #f8f7fb; box-shadow: 0 3px 10px #74668d05; }
 .btn--comfort:hover { background: #eae5f4; color: #7860ad; }
 
+.closing-checkin { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; margin-top: 28px; text-align: center; }
+.closing-checkin__prompt { margin: 0 0 10px; font-size: 15px; color: #6c6577; }
+.closing-checkin__options { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+.closing-checkin__choice { display: inline-flex; align-items: center; }
+.closing-checkin__dot { color: #c3b8d0; padding: 0 2px; }
+.closing-checkin__option { appearance: none; border: 0; background: transparent; padding: 8px 10px; min-height: 44px; border-radius: 999px; color: #83798c; font-size: 14px; cursor: pointer; }
+.closing-checkin__option[aria-checked="true"] { color: #7560ac; background: #e6dffa; }
+.closing-again { align-self: center; margin: 0 0 12px; padding: 8px 4px; min-height: 44px; border: 0; background: transparent; color: #8a8294; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.closing-again:hover { color: #6d627c; }
+.grounding-scene--done .companion { flex: 0 1 200px; max-height: 200px; }
+
 /* The writing step stays inside the screen. The card shrinks instead of scrolling the page. */
 html:has(.write-screen),
 body:has(.write-screen) {

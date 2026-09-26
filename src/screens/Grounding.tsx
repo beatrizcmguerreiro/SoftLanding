@@ -1,16 +1,25 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { GroundingExperience } from '../../shared/grounding.mjs'
 import { Companion } from '../components/Companion'
+
+const AFTER = ['A little lighter', 'About the same', 'Not sure'] as const
+type After = (typeof AFTER)[number]
 
 export function Grounding({ experience, onClose, step, setStep }: { experience: GroundingExperience; onClose: () => void; step: number; setStep: (step: number) => void }) {
   const invitation = useRef<HTMLHeadingElement>(null)
   const keys = ['touch', 'see', 'hear'] as const
   const done = step === keys.length
+  const [after, setAfter] = useState<After | null>(null)
   useEffect(() => { invitation.current?.focus() }, [step])
+  const chooseAfter = (option: After) => setAfter(option)
+  const replay = () => {
+    setAfter(null)
+    setStep(0)
+  }
   return (
     <section className={`grounding-scene${done ? ' grounding-scene--done' : ''}`} aria-label="A grounding moment">
       <div className="scene-light" aria-hidden="true" />
-      <p className="scene-recognition">Let's find somewhere soft to land.</p>
+      <p className="scene-recognition">{done ? 'Take a moment before you move on.' : "Let's find somewhere soft to land."}</p>
       <Companion expression="attentive" />
       <div className="invitation-stage">
         <div className="sensory-symbol" aria-hidden="true">
@@ -21,8 +30,36 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
         <h1 className="invitation-text" ref={invitation} tabIndex={-1} key={step}>
           {done ? 'The thought can still be there. And so can you.' : experience.grounding[keys[step]].split(/(?<=[.!?])\s+/).map((sentence, index) => <span className="invitation-paragraph" key={index}>{sentence}</span>)}
         </h1>
+        {done && (
+          <div className="closing-checkin">
+            <p id="closing-feeling" className="closing-checkin__prompt">How are you feeling now?</p>
+            <div className="closing-checkin__options" role="radiogroup" aria-labelledby="closing-feeling">
+              {AFTER.map((option, index) => (
+                <span className="closing-checkin__choice" key={option}>
+                  {index > 0 && <span className="closing-checkin__dot" aria-hidden="true">·</span>}
+                  <button type="button" role="radio" className="closing-checkin__option" aria-checked={after === option}
+                    tabIndex={after === option || (after === null && index === 0) ? 0 : -1}
+                    onClick={() => chooseAfter(option)}
+                    onKeyDown={event => {
+                      const next = event.key === 'ArrowRight' ? (index + 1) % AFTER.length : event.key === 'ArrowLeft' ? (index + AFTER.length - 1) % AFTER.length : null
+                      if (next === null) return
+                      event.preventDefault()
+                      chooseAfter(AFTER[next])
+                      const choice = event.currentTarget.parentElement?.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[next]
+                      choice?.focus()
+                    }}>
+                    {option}
+                  </button>
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="grounding-controls">
-          {done ? <button className="btn btn--primary" onClick={onClose}>Close</button> : <>
+          {done ? <>
+            <button type="button" className="closing-again" onClick={replay}>Try another grounding moment</button>
+            <button type="button" className="btn btn--primary" onClick={onClose}>Back to home.</button>
+          </> : <>
             <button className="btn btn--comfort" onClick={() => setStep(step + 1)}>Guide me on!</button>
             <div className="grounding-secondary">
               <button className="btn btn--secondary" onClick={() => setStep(keys.length)}>Skip for now</button>
