@@ -1,35 +1,36 @@
 SoftLanding is a quiet space for the moments between a medical test and its results. Write down a worry, watch it float away, and return to the present—without needing to have all the answers yet.
 
-## O que é
+## What it is
 
-Protótipo web mobile-first, em português de Portugal, que implementa o [`softlanding-plan.md`](softlanding-plan.md) com a direção visual do [`visual-style-guide.md`](visual-style-guide.md).
+A mobile-first web prototype in English that implements [`softlanding-plan-en.md`](softlanding-plan-en.md) using the visual direction in [`visual-style-guide-en.md`](visual-style-guide-en.md). The Portuguese originals are kept alongside them.
 
-Percurso: chegada → texto livre → organização em «Posso fazer» / «Ainda não posso saber» → pousar um pensamento → regresso ao presente → fecho. Não interpreta exames nem dá respostas médicas.
+Flow: arrival → free writing → organisation into “Can do” / “Cannot know yet” → set a thought aside → return to the present → close. It does not interpret tests or give medical answers.
 
-## Correr
+## Running it
 
 ```bash
 npm install
 npm run dev        # http://localhost:5173
-npm test           # testes da análise local, validação e salvaguardas
-npm run build && npm start   # servidor de produção em http://localhost:4173
+npm test           # tests for the local analysis, validation and safeguards
+npm run build && npm start   # production server on http://localhost:4173
 ```
 
-### IA opcional
+### Optional AI
 
-Sem configuração, tudo funciona com a **organização local** (fallback). Para ligar a IA, define a chave apenas no servidor:
+With no configuration, everything works using the **local organisation** (fallback). To turn on the AI, set the key on the server only:
 
 ```bash
-ANTHROPIC_API_KEY=... npm run dev     # ou: npm run build && ANTHROPIC_API_KEY=... npm start
-# opcional: ANTHROPIC_MODEL=<modelo>
+ANTHROPIC_API_KEY=... npm run dev     # or: npm run build && ANTHROPIC_API_KEY=... npm start
+# optional: ANTHROPIC_MODEL=<model>
 ```
 
-A chave é lida só em `server/analyze.mjs` e nunca chega ao browser. Quando a IA está ligada, o ecrã de escrita avisa que o texto é enviado a um serviço externo (Anthropic).
+The key is only read in `server/analyze.mjs` and never reaches the browser. When the AI is on, the writing screen warns that the text is sent to an external service (Anthropic). Never commit `.env` files; they are ignored by `.gitignore`.
 
-## O que é real e o que é simulado
+## What is real and what is simulated
 
-- **Funcional:** os 4 ecrãs e o estado de apoio humano; análise local determinística; validação da saída da IA (esquema, comprimentos, correspondência com o texto, bloqueio de doenças/probabilidades/tratamentos/falsa tranquilização); gesto de arrastar e botão «Pousar por agora»; teclado, `aria-live`, `prefers-reduced-motion`.
-- **Local e limitado:** a organização sem IA divide o texto em frases e orações que a pessoa escreveu. Só reconhece perguntas sobre *quando/como chega o resultado* (microação logística fixa) e menções a *pesquisar* (legenda). Não avalia gravidade.
-- **Salvaguardas simples, não triagem:** `needsHumanSupport` e `mentionsNewOrWorseningSymptoms` reconhecem expressões óbvias por palavras-chave. Uma versão pública exigiria revisão clínica, de privacidade e de segurança.
-- **Sem dados guardados:** o texto vive só em memória e é limpo ao sair. Sem localStorage, analytics, contas ou base de dados.
-- **Desvio assumido do esquema:** se o único pensamento for uma dúvida prática (ex.: «Nem sei quando vem o resultado»), «Ainda não posso saber» fica vazio em vez de inventar um pensamento.
+- **Working:** all four screens plus the human-support state; deterministic local analysis; validation of AI output (schema, lengths, match against the person’s text, blocking of diseases/probabilities/treatments/false reassurance); drag gesture and “Set aside for now” button; keyboard, `aria-live`, `prefers-reduced-motion`.
+- **Local and limited:** without AI, the text is split into the sentences and clauses the person wrote. It only recognises questions about *when/how the result arrives* (fixed logistical micro-action) and mentions of *searching* (caption). It does not assess severity.
+- **Simple safeguards, not triage:** `needsHumanSupport` and `mentionsNewOrWorseningSymptoms` match obvious English (and some Portuguese) phrases. A public version would need clinical, privacy and safety review.
+- **No data stored:** text lives only in memory and is cleared on exit. No localStorage, analytics, accounts or database.
+- **Support contacts are for Portugal** (112 and SNS 24), as in the plan.
+- **Deliberate schema deviation:** if the only thought is a practical question (e.g. “I don’t know when the result arrives”), “Cannot know yet” stays empty rather than inventing a thought.

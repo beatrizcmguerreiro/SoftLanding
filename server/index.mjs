@@ -39,5 +39,5 @@ async function serveStatic(req, res) {
 }
 
 createServer((req, res) => api(req, res, () => serveStatic(req, res))).listen(port, () => {
-  console.log(`SoftLanding em http://localhost:${port} — IA ${aiEnabled() ? 'ligada' : 'desligada (fallback local)'}`)
+  console.log(`SoftLanding on http://localhost:${port} — AI ${aiEnabled() ? 'on' : 'off (local fallback)'}`)
 })

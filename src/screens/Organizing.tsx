@@ -10,7 +10,7 @@ export function Organizing({ text, slow }: Props) {
   return (
     <section className="screen screen--center" aria-labelledby="organizing-title" aria-busy="true">
       <h1 id="organizing-title" className="visually-hidden">
-        A organizar os pensamentos
+        Organising your thoughts
       </h1>
       <p className="fragments" aria-hidden="true">
         {words.map((word, i) => (
@@ -19,7 +19,7 @@ export function Organizing({ text, slow }: Props) {
           </span>
         ))}
       </p>
-      {slow && <p className="fineprint">A organizar…</p>}
+      {slow && <p className="fineprint">Organising…</p>}
     </section>
   )
 }

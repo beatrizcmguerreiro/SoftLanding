@@ -9,11 +9,11 @@ export function Finished({ onRestart }: Props) {
   return (
     <section className="screen screen--center screen--quiet" aria-labelledby="finished-title">
       <h1 id="finished-title" className="title title--display" ref={heading} tabIndex={-1}>
-        Até já.
+        See you soon.
       </h1>
-      <p className="lead">O que escreveste não ficou guardado. Podes fechar este separador quando quiseres.</p>
+      <p className="lead">What you wrote hasn’t been saved. You can close this tab whenever you like.</p>
       <button type="button" className="link link--small" onClick={onRestart}>
-        Voltar ao início
+        Back to the start
       </button>
     </section>
   )

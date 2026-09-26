@@ -83,7 +83,7 @@ export default function App() {
     setAnalysis(result.analysis)
     setSource(result.source)
     setState('organized')
-    announce('Os pensamentos foram organizados em duas áreas: Posso fazer e Ainda não posso saber.')
+    announce('Your thoughts have been organised into two areas: Can do and Cannot know yet.')
   }, [text, aiAvailable, reset, announce])
 
   const finish = () => {
@@ -102,7 +102,7 @@ export default function App() {
         <span className="wordmark">SoftLanding</span>
         {state !== 'human-support' && (
           <button type="button" className="link link--small" onClick={() => setHelpOpen(true)}>
-            Ajuda agora
+            Help now
           </button>
         )}
       </header>

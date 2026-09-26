@@ -11,27 +11,26 @@ export const LIMITS = {
   total: 4,
 } as const
 
-export const TIMING_SUGGESTION = 'Confirmar quando e como será comunicado'
-export const TIMING_PHRASE =
-  'Podem dizer-me quando devo esperar o resultado e como serei contactado/a?'
-export const PATTERN_CAPTION = 'Pesquisar outra vez talvez não traga a resposta que falta.'
+export const TIMING_SUGGESTION = 'Confirm when and how the result will be communicated'
+export const TIMING_PHRASE = 'Could you tell me when I should expect the result and how I will be contacted?'
+export const PATTERN_CAPTION = 'Searching again may not bring the answer that is missing.'
 
 const TIMING_RE = [
-  /\b(quando|como)\b(\s+\S+){0,4}?\s+(chega|chegam|chegar|chegara|vem|veem|vir|vira|sai|saem|sair|saira|recebo|receber|dao|ligam|contactam|comunicam|avisam|dizem|fica pronto|ficam prontos|tenho o resultado|terei o resultado)\b/,
-  /\bquanto tempo\b/,
-  /\bprazo\b/,
+  /\b(when|how)\b(\s+\S+){0,4}?\s+(arrive|arrives|arriving|come|comes|coming|come back|comes back|be ready|is ready|are ready|get it|get them|get the results?|receive|hear|call|calls|tell|let me know|contact|contacts|find out)\b/,
+  /\bhow long\b/,
+  /\b(timeline|timeframe|deadline)\b/,
 ]
 
-const SEARCH_RE = /\b(pesquis|googl|procur(o|ar|ei|ando) (na internet|online|no google|sintomas|sobre))/
+const SEARCH_RE = /\b(search|googl|look(ing|ed)? (it |things |symptoms )?up|reading (about it|online))/
 
 const DISEASE_RE =
-  /\b(cancro|cancer|tumou?r|leucemia|linfoma|metasta|malign|benign|carcinoma|sarcoma|diabetes|avc|enfarte|esclerose|alzheimer|parkinson|hiv|sida|hepatite|quisto|nodulo|doenca)/g
-const PROBABILITY_RE = /(\d+\s*%|probab|provavel|improvavel|\brisco\b|\bchances?\b|estatistic|percentagem)/
-const TREATMENT_RE = /(tratament|medicac|medicament|comprimido|\btomar\b|\bdose\b|terapia|cirurgi|quimio|antibiot|operac)/
-const DIAGNOSIS_RE = /(diagnost|sintoma de|sinal de|indica que|significa que)/
+  /\b(cancer|tumou?r|leuka?emia|lymphoma|metasta|malignan|benign|carcinoma|sarcoma|diabetes|stroke|heart attack|sclerosis|alzheimer|parkinson|hiv|aids|hepatitis|cyst|nodule|disease)/g
+const PROBABILITY_RE = /(\d+\s*%|probab|\blikely\b|unlikely|\brisk\b|\bchances?\b|\bodds\b|statistic|percent)/
+const TREATMENT_RE = /(treatment|medicat|medicine|\bpills?\b|\bdose\b|therapy|surgery|chemo|antibiotic|operation)/
+const DIAGNOSIS_RE = /(diagnos|symptom of|sign of|indicates that|means that)/
 const REASSURANCE_RE =
-  /((vai|ha de|deve) correr (tudo )?bem|nao (e|deve ser|sera|vai ser) (nada )?grave|nao te preocupes|relaxa|e so ansiedade|de certeza|garant|fica tranquil|nao ha motivo|esta tudo bem)/
-const TIMEFRAME_RE = /\b\d+\s*(dias?|semanas?|horas?|meses?)\b/
+  /((it'?ll|it will|everything will|it'?s going to|everything'?s going to) be (fine|ok|okay|alright|all right)|(it'?s|it is) (probably )?nothing|not serious|don'?t worry|\brelax\b|just anxiety|for sure|guarantee|nothing to worry|all is well|stay calm)/
+const TIMEFRAME_RE = /\b\d+\s*(days?|weeks?|hours?|months?)\b/
 
 function introducesNew(re: RegExp, candidate: string, original: string): boolean {
   const c = normalize(candidate)
@@ -69,7 +68,7 @@ export function mentionsSearching(text: string): boolean {
 export function isTimingSuggestion(suggestion: string | undefined): boolean {
   if (!suggestion) return false
   const s = normalize(suggestion)
-  return /(quando|prazo)/.test(s) && /(comunica|contact|resultado|receb|chega)/.test(s)
+  return /(when|timeline|how long)/.test(s) && /(communicat|contact|result|receiv|arriv)/.test(s)
 }
 
 function cleanLabel(text: string): string {
@@ -86,13 +85,13 @@ export function splitClauses(text: string): string[] {
 
   const clauses: string[] = []
   for (const sentence of sentences) {
-    const parts = sentence.split(/\s+(e|mas)\s+/i)
+    const parts = sentence.split(/\s+(and|but)\s+/i)
     let current = parts[0] ?? ''
     for (let i = 1; i < parts.length; i += 2) {
       const joiner = parts[i]
       const next = parts[i + 1] ?? ''
       const wordCount = (s: string) => s.split(/\s+/).filter(Boolean).length
-      const startsWithNoun = /^(a|o|as|os|um|uma|uns|umas|meu|minha|meus|minhas|teu|tua|seu|sua|este|esta|esse|essa)\s/i.test(next)
+      const startsWithNoun = /^(a|an|the|my|your|his|her|our|their|this|that|these|those)\s/i.test(next)
       if (wordCount(current) >= 3 && wordCount(next) >= 3 && !startsWithNoun) {
         clauses.push(current)
         current = next

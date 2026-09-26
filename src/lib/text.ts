@@ -3,6 +3,7 @@ export function normalize(text: string): string {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\u2018\u2019]/g, "'")
     .replace(/\s+/g, ' ')
     .trim()
 }
@@ -18,13 +19,13 @@ export function truncateAtWord(text: string, max: number): string {
 
 export function capitalize(text: string): string {
   if (!text) return text
-  return text.charAt(0).toLocaleUpperCase('pt-PT') + text.slice(1)
+  return text.charAt(0).toLocaleUpperCase('en') + text.slice(1)
 }
 
 const STOPWORDS = new Set([
-  'a', 'o', 'as', 'os', 'e', 'de', 'do', 'da', 'dos', 'das', 'em', 'no', 'na', 'nos', 'nas',
-  'um', 'uma', 'que', 'se', 'me', 'te', 'eu', 'tu', 'com', 'por', 'para', 'ao', 'aos', 'mas',
-  'ou', 'ja', 'la', 'isto', 'isso', 'nao', 'sim', 'tenho', 'estou', 'e', 'sou', 'vou', 'foi',
+  'the', 'and', 'but', 'for', 'with', 'are', 'was', 'were', 'will', 'what', 'that', 'this',
+  'you', 'your', 'not', 'don', 'even', 'just', 'have', 'has', 'can', 'its', 'about', 'from',
+  'they', 'them', 'there', 'then', 'than', 'been', 'being', 'into', 'out', 'all', 'too',
 ])
 
 export function contentWords(text: string): string[] {

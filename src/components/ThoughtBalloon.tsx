@@ -25,7 +25,7 @@ export function ThoughtBalloon({ id, label, index, selected, setDown, onToggle, 
       <li className="balloon-slot balloon-slot--down" style={style}>
         <div className="balloon balloon--unknown balloon--down" id={id}>
           <span className="balloon__text">{label}</span>
-          <span className="visually-hidden"> (pousado por agora)</span>
+          <span className="visually-hidden"> (set aside for now)</span>
         </div>
       </li>
     )
@@ -85,12 +85,12 @@ export function ThoughtBalloon({ id, label, index, selected, setDown, onToggle, 
         <span className="balloon__text">{label}</span>
       </button>
       <div id={`${id}-actions`} className="balloon-actions" hidden={!selected}>
-        <p className="balloon-actions__hint">Podes notar este pensamento sem teres de o seguir agora.</p>
+        <p className="balloon-actions__hint">You can notice this thought without having to follow it now.</p>
         <button type="button" className="btn btn--soft" onClick={onSetDown}>
-          Pousar por agora
+          Set aside for now
         </button>
         <p className="balloon-actions__tip" aria-hidden="true">
-          Também o podes arrastar para o lado.
+          You can also drag it to the side.
         </p>
       </div>
     </li>

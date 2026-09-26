@@ -20,22 +20,22 @@ export function Welcome({ onStart, onHelp }: Props) {
       </svg>
 
       <h1 id="welcome-title" className="title title--display" ref={heading} tabIndex={-1}>
-        Há coisas que ainda não podes saber.
+        There are things you cannot know yet.
       </h1>
       <p className="lead">
-        Se a espera por um resultado te está a encher a cabeça de cenários, podes pousá-los aqui por um momento.
+        If waiting for a result is filling your head with scenarios, you can set them down here for a moment.
       </p>
 
       <div className="actions">
         <button type="button" className="btn btn--primary" onClick={onStart}>
-          Começar
+          Start
         </button>
         <button type="button" className="link" onClick={onHelp}>
-          Preciso de ajuda agora
+          I need help now
         </button>
       </div>
 
-      <p className="fineprint">Não interpretamos exames nem damos respostas médicas.</p>
+      <p className="fineprint">We don’t interpret tests or give medical answers.</p>
     </section>
   )
 }

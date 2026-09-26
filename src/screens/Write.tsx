@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react'
 import { LIMITS } from '../lib/analysis'
 import { useFocusOnMount } from '../components/useFocusOnMount'
 
-export const DEMO_TEXT = 'E se o resultado for grave? Nem sei quando chega e estou sempre a pesquisar.'
+export const DEMO_TEXT = "What if the result is serious? I don't even know when it arrives and I keep searching."
 
 type Props = {
   text: string
@@ -31,10 +31,10 @@ export function Write({ text, aiAvailable, onChange, onSubmit, onBack }: Props) 
     <section className="screen" aria-labelledby="write-title">
       <form className="write" onSubmit={submit} noValidate>
         <h1 id="write-title" className="title" ref={heading} tabIndex={-1}>
-          <label htmlFor="thoughts">O que te está a passar pela cabeça?</label>
+          <label htmlFor="thoughts">What’s going through your mind?</label>
         </h1>
         <p id="thoughts-help" className="lead lead--left">
-          Pode ser uma frase solta. Não precisas de a organizar.
+          It can be a loose sentence. You don’t need to organise it.
         </p>
 
         <div className={`field${error ? ' field--error' : ''}`}>
@@ -60,7 +60,7 @@ export function Write({ text, aiAvailable, onChange, onSubmit, onBack }: Props) 
                 setError(false)
               }}
             >
-              Usar exemplo (texto fictício)
+              Use example (fictional text)
             </button>
             {nearLimit && (
               <span id="thoughts-count" className="field__count">
@@ -70,23 +70,23 @@ export function Write({ text, aiAvailable, onChange, onSubmit, onBack }: Props) 
           </div>
           {error && (
             <p id="thoughts-error" className="field__error" role="alert">
-              Escreve pelo menos uma frase, mesmo curta.
+              Write at least one sentence, even a short one.
             </p>
           )}
         </div>
 
         <p className="fineprint fineprint--left">
           {aiAvailable
-            ? 'Ao continuar, o texto é enviado a um serviço de IA externo (Anthropic) só para ser organizado. Não o guardamos. Nesta demo, usa texto fictício.'
-            : 'O texto é organizado neste dispositivo e não é enviado nem guardado.'}
+            ? 'When you continue, your text is sent to an external AI service (Anthropic) only to be organised. We don’t store it. In this demo, use fictional text.'
+            : 'Your text is organised on this device and is not sent or stored.'}
         </p>
 
         <div className="actions">
           <button type="submit" className="btn btn--primary">
-            Dar espaço aos pensamentos
+            Make space for these thoughts
           </button>
           <button type="button" className="link" onClick={onBack}>
-            Voltar
+            Back
           </button>
         </div>
       </form>

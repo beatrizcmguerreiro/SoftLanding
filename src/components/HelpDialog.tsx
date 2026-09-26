@@ -28,16 +28,16 @@ export function HelpDialog({ open, onClose }: Props) {
     >
       <div className="sheet__body">
         <h2 id="help-title" className="sheet__title">
-          Apoio humano
+          Human support
         </h2>
         <p className="sheet__text">
-          Esta experiência não substitui uma pessoa. Se precisas de falar com alguém agora, estes contactos
-          funcionam em Portugal.
+          This experience doesn’t replace a person. If you need to talk to someone now, these contacts work in
+          Portugal.
         </p>
         <SupportContacts />
-        <p className="sheet__note">Fora de Portugal, usa o número de emergência local.</p>
+        <p className="sheet__note">Outside Portugal, use your local emergency number.</p>
         <button type="button" className="btn btn--secondary" onClick={onClose}>
-          Fechar painel
+          Close panel
         </button>
       </div>
     </dialog>

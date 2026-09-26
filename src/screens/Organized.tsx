@@ -25,7 +25,7 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
   const putDown = (i: number) => {
     setSetDown((prev) => new Set(prev).add(i))
     setSelected(null)
-    announce('Pensamento pousado por agora. Continua visível, mais ao fundo.')
+    announce('Thought set aside for now. It is still visible, further back.')
     requestAnimationFrame(() => unknownRegion.current?.focus())
   }
 
@@ -34,11 +34,11 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
     try {
       await navigator.clipboard.writeText(phrase)
       setCopied(true)
-      announce('Frase copiada.')
+      announce('Phrase copied.')
     } catch {
       const el = document.getElementById('ready-phrase')
       if (el) window.getSelection()?.selectAllChildren(el)
-      announce('Não foi possível copiar automaticamente. A frase ficou selecionada.')
+      announce('Couldn’t copy automatically. The phrase has been selected.')
     }
   }
 
@@ -52,14 +52,14 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
   return (
     <section className="screen screen--wide" aria-labelledby="organized-title">
       <h1 id="organized-title" className="title title--center" ref={heading} tabIndex={-1}>
-        O medo é real. O resultado ainda não é conhecido.
+        The fear is real. The result is not yet known.
       </h1>
 
       <div className="regions">
         <section className="region region--can" aria-labelledby="can-title">
           <h2 id="can-title" className="region__title">
             <span className="region__mark" aria-hidden="true" />
-            Posso fazer
+            Can do
           </h2>
           {canDo ? (
             <>
@@ -72,15 +72,15 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
               </ul>
               {canDo.suggestion && (
                 <div className="microaction" style={{ '--i': nextIndex() } as CSSProperties}>
-                  <p className="microaction__eyebrow">Se quiseres, quando for possível</p>
+                  <p className="microaction__eyebrow">If you want, when it’s possible</p>
                   <p className="microaction__text">{canDo.suggestion}</p>
                   {phrase && (
                     <>
                       <p className="microaction__phrase" id="ready-phrase">
-                        «{phrase}»
+                        “{phrase}”
                       </p>
                       <button type="button" className="btn btn--soft" onClick={copyPhrase}>
-                        {copied ? 'Frase copiada' : 'Copiar frase'}
+                        {copied ? 'Phrase copied' : 'Copy phrase'}
                       </button>
                     </>
                   )}
@@ -88,14 +88,14 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
               )}
             </>
           ) : (
-            <p className="region__empty">Não precisas de encontrar uma tarefa para este momento.</p>
+            <p className="region__empty">You don’t need to find a task for this moment.</p>
           )}
         </section>
 
         <section className="region region--unknown" aria-labelledby="unknown-title">
           <h2 id="unknown-title" className="region__title">
             <span className="region__mark region__mark--hollow" aria-hidden="true" />
-            Ainda não posso saber
+            Cannot know yet
           </h2>
           <div ref={unknownRegion} tabIndex={-1} className="region__focus" aria-labelledby="unknown-title">
             {unknownItems.length > 0 ? (
@@ -114,7 +114,7 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
                 ))}
               </ul>
             ) : (
-              <p className="region__empty">Nada por agora.</p>
+              <p className="region__empty">Nothing here for now.</p>
             )}
           </div>
         </section>
@@ -124,16 +124,16 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
 
       <div className="actions">
         <button type="button" className="btn btn--primary" onClick={onExit}>
-          Voltar ao presente
+          Return to the present
         </button>
       </div>
 
       <p className="fineprint">
         {source === 'ai'
-          ? 'Organizado por IA a partir das tuas palavras. Não interpreta exames.'
+          ? 'Organised by AI from your own words. It does not interpret tests.'
           : aiAvailable
-            ? 'A IA não respondeu; usámos uma organização local simples das tuas palavras.'
-            : 'Organização local simples das tuas palavras, sem IA.'}
+            ? 'The AI didn’t respond, so we used a simple local organisation of your words.'
+            : 'A simple local organisation of your words, without AI.'}
       </p>
     </section>
   )

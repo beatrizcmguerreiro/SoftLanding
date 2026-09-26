@@ -18,7 +18,7 @@ export function Grounding({ onClose, onHelp }: Props) {
   return (
     <section className="screen screen--center" aria-labelledby="grounding-title">
       <h1 id="grounding-title" className="title title--display" ref={heading} tabIndex={-1}>
-        Ainda não tens a resposta. E podes estar aqui, agora.
+        You still don’t have the answer. And you can be here, now.
       </h1>
 
       <div className="card card--tilt">
@@ -27,19 +27,19 @@ export function Grounding({ onClose, onHelp }: Props) {
           <span />
           <span />
         </div>
-        <p className="card__text">Repara em três coisas que consegues ver à tua volta.</p>
+        <p className="card__text">Notice three things you can see around you.</p>
       </div>
 
       <p className={`soft-note${ready ? ' is-visible' : ''}`} aria-live="polite">
-        {ready ? 'Podes fechar por agora.' : ''}
+        {ready ? 'You can close this for now.' : ''}
       </p>
 
       <div className="actions">
         <button type="button" className="btn btn--primary" onClick={onClose}>
-          Fechar
+          Close
         </button>
         <button type="button" className="link" onClick={onHelp}>
-          Preciso de apoio humano
+          I need human support
         </button>
       </div>
     </section>
