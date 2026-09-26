@@ -6,10 +6,12 @@ import './index.css'
 import App from './App.tsx'
 import { PhonePreview } from './components/PhonePreview'
 
-document.documentElement.classList.toggle('framed-app', new URLSearchParams(window.location.search).get('framed') === '1' && window.self !== window.top)
+const params = new URLSearchParams(window.location.search)
+const framed = params.get('framed') === '1' && window.self !== window.top
+document.documentElement.classList.toggle('framed-app', framed)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    {new URLSearchParams(window.location.search).get('phone') === '1' ? <PhonePreview /> : <App />}
+    {framed || params.get('plain') === '1' ? <App /> : <PhonePreview />}
   </StrictMode>,
 )

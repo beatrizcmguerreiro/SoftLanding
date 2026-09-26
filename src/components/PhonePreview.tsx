@@ -15,7 +15,10 @@ export function PhonePreview() {
   const source = new URL(window.location.href)
   source.searchParams.delete('phone')
   source.searchParams.delete('framed')
-  const embeddedSource = new URL(source)
+  source.searchParams.set('plain', '1')
+  const embeddedSource = new URL(window.location.href)
+  embeddedSource.searchParams.delete('phone')
+  embeddedSource.searchParams.delete('plain')
   embeddedSource.searchParams.set('framed', '1')
   return (
     <main className="phone-preview">
