@@ -880,7 +880,7 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .feeling-track::-webkit-scrollbar { display: none; }
 .feeling-track button { flex: 0 0 112px; min-height: 44px; border: 2px solid transparent; border-radius: 24px; background: transparent; color: #83798c; font-size: 14px; scroll-snap-align: center; cursor: pointer; }
 .feeling-track button[aria-checked="true"] { background: #e6dffa; border-color: #fff; color: #7560ac; box-shadow: 0 3px 12px #9380c329; }
-.feeling-hint { text-align: center; font-size: 17px; color: #89818f; margin: 12px 0 0; }
+.feeling-hint { text-align: center; font-size: 15px; color: #89818f; margin: 12px 0 0; }
 .feeling-screen > .btn { margin-top: 12px; flex-shrink: 0; }
 .app:has(.feeling-screen) .topbar { padding-top: 12px; padding-bottom: 6px; }
 
