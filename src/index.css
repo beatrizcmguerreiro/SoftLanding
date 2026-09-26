@@ -904,7 +904,7 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .btn--comfort:hover { background: #eae5f4; color: #7860ad; }
 
 .closing-checkin { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; align-self: stretch; width: 100%; margin-top: 12px; text-align: center; }
-.closing-checkin__prompt { margin: 0 0 10px; font-size: 15px; color: #6c6577; }
+.closing-checkin__prompt { margin: 0 0 12px; font-size: 18px; color: #6c6577; }
 .closing-checkin__options { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
 .closing-checkin__option { display: flex; align-items: center; justify-content: center; width: 100%; border: 1.5px solid #fff; box-shadow: 0 5px 12px #40354508; }
 .closing-checkin__option--green { background: #e3f6e8; color: #3f6d4c; }
