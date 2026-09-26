@@ -4,6 +4,7 @@ import { Companion } from '../components/Companion'
 
 const AFTER = ['A little lighter', 'About the same', 'Not sure'] as const
 type After = (typeof AFTER)[number]
+const TONE: Record<After, string> = { 'A little lighter': 'green', 'About the same': 'yellow', 'Not sure': 'red' }
 
 export function Grounding({ experience, onClose, step, setStep }: { experience: GroundingExperience; onClose: () => void; step: number; setStep: (step: number) => void }) {
   const invitation = useRef<HTMLHeadingElement>(null)
@@ -35,7 +36,7 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
             <p id="closing-feeling" className="closing-checkin__prompt">How are you feeling now?</p>
             <div className="closing-checkin__options" role="radiogroup" aria-labelledby="closing-feeling">
               {AFTER.map((option, index) => (
-                <button type="button" role="radio" key={option} className="btn closing-checkin__option" aria-checked={after === option}
+                <button type="button" role="radio" key={option} className={`btn closing-checkin__option closing-checkin__option--${TONE[option]}`} aria-checked={after === option}
                   tabIndex={after === option || (after === null && index === 0) ? 0 : -1}
                   onClick={() => chooseAfter(option)}
                   onKeyDown={event => {
@@ -52,8 +53,8 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
           </div>
         )}
         <div className="grounding-controls">
-          {done ? <>
-            <button type="button" className="btn btn--comfort" onClick={replay}>Try another grounding moment</button>
+          {done ? after && <>
+            {after !== 'A little lighter' && <button type="button" className="btn btn--comfort" onClick={replay}>Try another grounding moment</button>}
             <button type="button" className="btn btn--primary" onClick={onClose}>Back to home.</button>
           </> : <>
             <button className="btn btn--comfort" onClick={() => setStep(step + 1)}>Guide me on!</button>

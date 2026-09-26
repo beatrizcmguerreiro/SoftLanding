@@ -906,8 +906,14 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .closing-checkin { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-self: stretch; width: 100%; margin-top: 12px; text-align: center; }
 .closing-checkin__prompt { margin: 0 0 10px; font-size: 15px; color: #6c6577; }
 .closing-checkin__options { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-.closing-checkin__option { width: 100%; background: #fff; color: #202020; border: 1.5px solid #fff; box-shadow: 0 5px 12px #40354506; }
-.closing-checkin__option[aria-checked="true"] { background: #e9e2f5; color: #8065bf; border-color: #f8f7fb; }
+.closing-checkin__option { width: 100%; border: 1.5px solid #fff; box-shadow: 0 5px 12px #40354508; }
+.closing-checkin__option--green { background: #e3f6e8; color: #3f6d4c; }
+.closing-checkin__option--yellow { background: #fff4d6; color: #7a6232; }
+.closing-checkin__option--red { background: #fbe6e6; color: #8d4e56; }
+.closing-checkin__option--green[aria-checked="true"] { background: #c9ecd4; }
+.closing-checkin__option--yellow[aria-checked="true"] { background: #ffe7a8; }
+.closing-checkin__option--red[aria-checked="true"] { background: #f6d0d2; }
+.grounding-scene--done .grounding-controls:not(:has(.btn)) { display: none; }
 .grounding-scene--done .grounding-controls { gap: 10px; margin-top: 10px; }
 .grounding-scene--done .companion { flex: 0 1 148px; max-height: 148px; margin-top: 4px; }
 .grounding-scene--done .sensory-symbol { margin-bottom: 8px; }
