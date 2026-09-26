@@ -856,8 +856,8 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 
 
 /* Soft lavender icon controls. */
-.topbar__back, .thought-deck__mic { background: #f1eff6; color: #b5a6e8; border: 1px solid #f8f7fb; box-shadow: 0 3px 10px #74668d05; }
-.topbar__back:hover, .thought-deck__mic:hover { background: #eae5f4; color: #9a87d2; }
+.topbar__back, .thought-deck__mic, .scene-voice { background: #f1eff6; color: #b5a6e8; border: 1px solid #f8f7fb; box-shadow: 0 3px 10px #74668d05; }
+.topbar__back:hover, .thought-deck__mic:hover, .scene-voice:hover { background: #eae5f4; color: #9a87d2; }
 .thought-deck__mic[aria-pressed='true'] { background: #e2d9f4; color: #7860ad; }
 
 
@@ -917,6 +917,13 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .grounding-scene--done .grounding-controls { gap: 10px; margin-top: 10px; }
 .grounding-scene--done .companion { flex: 0 1 148px; max-height: 148px; margin-top: 4px; }
 .grounding-scene--done .sensory-symbol { margin-bottom: 8px; }
+.scene-voice { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; margin: 14px 0 0; padding: 0; border: 1px solid #f8f7fb; border-radius: 50%; background: #f1eff6; color: #b5a6e8; box-shadow: 0 3px 10px #74668d05; cursor: pointer; }
+.scene-voice:hover { background: #eae5f4; color: #9a87d2; }
+.scene-voice[aria-pressed='false'] { color: #b4aebd; }
+.scene-voice svg { width: 22px; height: 22px; }
+.sensory-symbol.is-speaking { animation: symbol-breathe 3.4s ease-in-out infinite; }
+@keyframes symbol-breathe { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sensory-symbol.is-speaking { animation: none; } }
 
 /* The writing step stays inside the screen. The card shrinks instead of scrolling the page. */
 html:has(.write-screen),
