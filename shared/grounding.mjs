@@ -19,12 +19,12 @@ export function thoughtExcerpt(text) {
 }
 export function fallbackGrounding(text) {
   return {
-    recognition: 'Waiting can be difficult.',
+    recognition: 'While you wait, take a moment to notice what’s around you.',
     thought_label: thoughtExcerpt(text),
     grounding: {
-      touch: 'If it feels comfortable, notice where your body touches a surface. Pay attention to its texture or pressure.',
-      see: 'If it feels comfortable to look around, notice one detail of colour or light. Let your gaze rest there briefly.',
-      hear: 'Notice a sound around you, if there is one. You don’t need to identify it.',
+      touch: 'If comfortable, rest your fingertips on a nearby surface. Notice whether it feels smooth, rough, warm or cool.',
+      see: 'If comfortable, look for one colour around you. Let your eyes follow the shape of something in that colour.',
+      hear: 'Listen for one sound nearby, if you can. Notice whether it stays steady or comes and goes.',
     },
   }
 }

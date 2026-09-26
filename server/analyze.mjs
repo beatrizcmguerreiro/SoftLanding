@@ -9,7 +9,7 @@ Return exactly this JSON schema with no extra keys:
 {"recognition":"string","thought_label":"string","grounding":{"touch":"string","see":"string","hear":"string"}}
 recognition: one short sentence acknowledging the difficulty of waiting, at most 24 words. No interpretation.
 thought_label: a faithful contiguous excerpt from the user's text, at most 85 characters. Do not rewrite it; shorten at a word boundary with an ellipsis if needed.
-grounding: exactly three distinct invitations in touch, see, hear order. Each at most two short sentences and 40 words. Touch focuses on physical sensation or an object; see on a visual detail; hear on surrounding sound. Use natural, varied language tailored to emotional context such as searching, lying awake, or thoughts jumping ahead, only when mentioned. Do not repeat medical fears. Do not assume location, ability or possessions. Offer flexibility using phrases such as 'if it feels comfortable' or 'if there is something nearby'. Invite noticing without asking for an answer. No questions, timers, ratings, tasks to report, breath holding or eye-closing requirements. Never say 'you are safe', 'nothing serious', 'everything will be fine', 'just relax', or equivalent reassurance. Do not repeat a fixed script.`
+grounding: exactly three distinct invitations in touch, see, hear order. Make each step concrete and easy to follow: one small action followed by one specific detail to notice, such as texture, a colour or a steady sound. Avoid vague instructions like "pay attention to your sensations". Each at most two short sentences and 40 words. Touch focuses on physical sensation or an object; see on a visual detail; hear on surrounding sound. Use natural, varied language tailored to emotional context such as searching, lying awake, or thoughts jumping ahead, only when mentioned. Do not repeat medical fears. Do not assume location, ability or possessions. Offer flexibility using phrases such as 'if it feels comfortable' or 'if there is something nearby'. Invite noticing without asking for an answer. No questions, timers, ratings, tasks to report, breath holding or eye-closing requirements. Never say 'you are safe', 'nothing serious', 'everything will be fine', 'just relax', or equivalent reassurance. Do not repeat a fixed script.`
 const MAX_INPUT = 600
 
 export function aiEnabled(env = process.env) {
@@ -102,3 +102,6 @@ export function apiMiddleware(env = process.env) {
     return next()
   }
 }
+
+
+

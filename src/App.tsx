@@ -3,15 +3,18 @@ import { fallbackGrounding, validateGrounding, type GroundingExperience } from '
 import { needsHumanSupport, mentionsNewOrWorseningSymptoms } from './lib/safety'
 import { HelpDialog } from './components/HelpDialog'
 import { Welcome } from './screens/Welcome'
+import { Feeling } from './screens/Feeling'
 import { Write } from './screens/Write'
 import { Grounding } from './screens/Grounding'
 import { HumanSupport } from './screens/HumanSupport'
 import type { SupportReason } from './lib/types'
 
 export default function App() {
-  const [screen, setScreen] = useState<'welcome' | 'write' | 'grounding' | 'support'>('welcome')
+  const [screen, setScreen] = useState<'welcome' | 'feeling' | 'write' | 'grounding' | 'support'>('welcome')
+  const [feeling, setFeeling] = useState('Unsure')
   const [text, setText] = useState('')
   const [experience, setExperience] = useState<GroundingExperience | null>(null)
+  const [groundingStep, setGroundingStep] = useState(0)
   const [support, setSupport] = useState<SupportReason>('urgent')
   const [helpOpen, setHelpOpen] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -21,6 +24,7 @@ export default function App() {
     request.current?.abort()
     request.current = null
     setText('')
+    setFeeling('Unsure')
     setExperience(null)
     setBusy(false)
     setScreen('welcome')
@@ -28,6 +32,7 @@ export default function App() {
   const showSupport = (reason: SupportReason) => {
     setSupport(reason)
     setText('')
+    setFeeling('Unsure')
     setExperience(null)
     setBusy(false)
     setScreen('support')
@@ -58,25 +63,39 @@ export default function App() {
     if (request.current !== controller) return
     request.current = null
     setExperience(next)
+    setGroundingStep(0)
     setBusy(false)
     setScreen('grounding')
   }
   return (
     <div className="app">
       <header className="topbar">
-        <span className="wordmark">SoftLanding<span className="wordmark__dot">.</span></span>
+        {screen !== 'write' && screen !== 'grounding' && screen !== 'feeling' && <span className="wordmark">SoftLanding<span className="wordmark__dot">.</span></span>}
+        {(screen === 'write' || screen === 'grounding' || screen === 'feeling') && <button className="topbar__back" type="button" aria-label="Go back" disabled={busy} onClick={() => {
+          if (screen === 'feeling') setScreen('welcome')
+          else if (screen === 'write') setScreen('feeling')
+          else if (groundingStep > 0) setGroundingStep(groundingStep - 1)
+          else setScreen('write')
+        }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="m14 6-6 6 6 6M8 12h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>}
       </header>
       <main className="main" key={screen}>
-        {screen === 'welcome' && <Welcome onStart={() => setScreen('write')} onHelp={() => setHelpOpen(true)} />}
+        {screen === 'welcome' && <Welcome onStart={() => setScreen('feeling')} onHelp={() => setHelpOpen(true)} />}
+        {screen === 'feeling' && <Feeling value={feeling} onChange={setFeeling} onContinue={() => setScreen('write')} />}
         {screen === 'write' && <Write text={text} onChange={setText} onSubmit={submit} onSkip={() => {
           setText('')
           setExperience(fallbackGrounding(''))
+          setGroundingStep(0)
           setScreen('grounding')
         }} busy={busy} />}
-        {screen === 'grounding' && experience && <Grounding experience={experience} onClose={reset} onBack={() => setScreen('write')} />}
+        {screen === 'grounding' && experience && <Grounding experience={experience} originalText={text} onClose={reset} step={groundingStep} setStep={setGroundingStep} />}
         {screen === 'support' && <HumanSupport reason={support} onRestart={reset} />}
       </main>
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )
 }
+

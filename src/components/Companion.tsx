@@ -1,4 +1,4 @@
-export function Companion({ small = false }: { small?: boolean }) {
+export function Companion({ small = false, expression = 'happy' }: { small?: boolean; expression?: 'happy' | 'unsure' | 'attentive' }) {
   return (
     <svg className={`companion${small ? ' companion--small' : ''}`} viewBox="0 0 360 280" aria-hidden="true" focusable="false">
       <defs>
@@ -11,8 +11,16 @@ export function Companion({ small = false }: { small?: boolean }) {
       <ellipse cx="151" cy="146" rx="18" ry="27" fill="#343536" /><ellipse cx="211" cy="146" rx="18" ry="27" fill="#343536" />
       <circle cx="141" cy="135" r="9" fill="white" /><circle cx="202" cy="135" r="9" fill="white" />
       <circle cx="156" cy="159" r="4" fill="white" /><circle cx="216" cy="159" r="4" fill="white" />
-      <path d="M143 207c0-17 19-18 37-13 18-5 38-4 38 13 0 17-19 29-38 29s-37-12-37-29Z" fill="white" />
-      <path d="M161 232c3-25 35-25 39 0-13 6-26 6-39 0Z" fill="#ee959e" />
+      {expression === 'attentive' ? <>
+        <path d="M124 103q16-8 32-5M204 98q16-3 30 5" fill="none" stroke="#8776aa" strokeWidth="4" strokeLinecap="round" />
+        <path d="M167 209q14 8 28 0" fill="none" stroke="#8776aa" strokeWidth="5" strokeLinecap="round" />
+      </> : expression === 'unsure' ? <>
+        <path d="M124 103q17-13 34-5M203 100q17 1 29 10" fill="none" stroke="#76679d" strokeWidth="5" strokeLinecap="round" />
+        <path d="M163 212q10-7 19-2t17-3" fill="none" stroke="#76679d" strokeWidth="6" strokeLinecap="round" />
+      </> : <>
+        <path d="M143 207c0-17 19-18 37-13 18-5 38-4 38 13 0 17-19 29-38 29s-37-12-37-29Z" fill="white" />
+        <path d="M161 232c3-25 35-25 39 0-13 6-26 6-39 0Z" fill="#ee959e" />
+      </>}
     </svg>
   )
 }

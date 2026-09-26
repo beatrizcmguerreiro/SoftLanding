@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react'
+import { ThoughtDeck } from '../components/ThoughtDeck'
 import { LIMITS } from '../lib/analysis'
 import { useFocusOnMount } from '../components/useFocusOnMount'
 
 export const DEMO_TEXT = "What if the result is serious? I don't even know when it arrives and I keep searching."
+const EXAMPLES = [DEMO_TEXT, 'Waiting is taking up so much space in my head.', 'I keep searching, but it isn’t helping me switch off.', 'My thoughts keep jumping ahead.', 'I’m finding it hard to focus on what’s in front of me.']
 
 type Props = {
   text: string
@@ -23,6 +25,7 @@ type SpeechWindow = Window & { SpeechRecognition?: new () => Dictation; webkitSp
 export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
   const heading = useFocusOnMount<HTMLHeadingElement>()
   const [error, setError] = useState(false)
+  const exampleIndex = useRef(0)
   const [listening, setListening] = useState(false)
   const [speechMessage, setSpeechMessage] = useState('')
   const speech = useRef<Dictation | null>(null)
@@ -37,12 +40,12 @@ export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
   }, [])
   const dictate = () => {
     if (listening) { speech.current?.stop(); return }
-    if (!Speech) return
+    if (!Speech) { setSpeechMessage('You can use your keyboard’s microphone to dictate in this browser.'); return }
     const recognition = new Speech()
     speech.current = recognition
     recognition.lang = 'en-GB'
     recognition.continuous = false
-    recognition.interimResults = false
+    recognition.interimResults = true
     const before = text.trim()
     recognition.onresult = event => {
       const transcript = Array.from(event.results).map(result => result[0].transcript).join(' ')
@@ -78,21 +81,10 @@ export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
         </p>
 
         <div className={`field${error ? ' field--error' : ''}`}>
-          <textarea
-            id="thoughts"
-            className="field__input"
-            value={text}
-            disabled={busy || listening}
-            placeholder="You can begin anywhere…"
-            maxLength={LIMITS.input}
-            rows={6}
-            aria-describedby={`thoughts-help${error ? ' thoughts-error' : ''}${nearLimit ? ' thoughts-count' : ''}`}
-            aria-invalid={error || undefined}
-            onChange={(e) => {
-              onChange(e.target.value)
-              if (error && e.target.value.trim()) setError(false)
-            }}
-          />
+          <ThoughtDeck text={text} disabled={busy || listening} error={error}
+            onDictate={dictate} listening={listening} busy={busy}
+            describedBy={`thoughts-help${error ? ' thoughts-error' : ''}${nearLimit ? ' thoughts-count' : ''}`}
+            onChange={value => { onChange(value); if (value.trim()) setError(false) }} />
           <div className="field__meta">
             {nearLimit && (
               <span id="thoughts-count" className="field__count">
@@ -108,18 +100,16 @@ export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
         </div>
 
         <div className="write-tools">
-        {Speech ? <button className="btn btn--primary voice-button" type="button" disabled={busy} onClick={dictate} aria-pressed={listening}>
-          {listening ? 'Stop dictation' : 'Use my voice'}
-        </button> : <p className="dictation-note">You can also use your keyboard’s microphone to dictate.</p>}
           <button type="button" className="btn btn--secondary" disabled={busy || listening} onClick={() => {
-            onChange(DEMO_TEXT)
+            onChange(EXAMPLES[exampleIndex.current])
+            exampleIndex.current = (exampleIndex.current + 1) % EXAMPLES.length
             setError(false)
           }}>Use example</button>
         </div>
-        <p className="dictation-note" role="status">{listening ? 'Listening…' : speechMessage}</p>
+        <p className="visually-hidden" role="status">{listening ? 'Listening…' : speechMessage}</p>
 
         <p className="fineprint fineprint--left">
-          Your words aren’t saved by SoftLanding.
+          {speechMessage || 'Your words aren’t saved by SoftLanding.'}
         </p>
 
         <div className="actions">
@@ -135,3 +125,4 @@ export function Write({ text, busy, onChange, onSubmit, onSkip }: Props) {
     </section>
   )
 }
+
