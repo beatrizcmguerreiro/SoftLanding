@@ -8,7 +8,15 @@ const AFTER = ['A little lighter', 'About the same', 'Not sure'] as const
 type After = (typeof AFTER)[number]
 const TONE: Record<After, string> = { 'A little lighter': 'green', 'About the same': 'yellow', 'Not sure': 'red' }
 
-export function Grounding({ experience, onClose, step, setStep }: { experience: GroundingExperience; onClose: () => void; step: number; setStep: (step: number) => void }) {
+type Props = {
+  experience: GroundingExperience
+  suggestion?: string | null
+  onClose: () => void
+  step: number
+  setStep: (step: number) => void
+}
+
+export function Grounding({ experience, suggestion, onClose, step, setStep }: Props) {
   const invitation = useRef<HTMLHeadingElement>(null)
   const keys = ['touch', 'see', 'hear'] as const
   const done = step === keys.length
@@ -63,6 +71,12 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
               ))}
             </div>
           </div>
+        )}
+        {done && suggestion && (
+          <p className="scene-suggestion">
+            <span className="scene-suggestion__eyebrow">One thing you could do</span>
+            {suggestion}
+          </p>
         )}
         <div className="grounding-controls">
           {done ? after && <>

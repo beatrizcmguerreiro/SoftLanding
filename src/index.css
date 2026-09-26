@@ -880,25 +880,25 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .feeling-track::-webkit-scrollbar { display: none; }
 .feeling-track button { flex: 0 0 112px; min-height: 44px; border: 2px solid transparent; border-radius: 24px; background: transparent; color: #83798c; font-size: 14px; scroll-snap-align: center; cursor: pointer; }
 .feeling-track button[aria-checked="true"] { background: #e6dffa; border-color: #fff; color: #7560ac; box-shadow: 0 3px 12px #9380c329; }
-.feeling-hint { text-align: center; font-size: 17px; color: #89818f; margin: 12px 0 0; }
+.feeling-hint { text-align: center; font-size: 15px; color: #89818f; margin: 12px 0 0; }
 .feeling-screen > .btn { margin-top: 12px; flex-shrink: 0; }
 .app:has(.feeling-screen) .topbar { padding-top: 12px; padding-bottom: 6px; }
 
-/* Let the illustration yield space to the full thought and grounding prompt. */
-.app:has(.grounding-scene) { height: calc(100dvh - 56px); }
-.app:has(.grounding-scene) .main { min-height: 0; }
-.grounding-scene { height: 100%; min-height: 0; padding-top: 8px; }
+/* The grounding moment is one view: it fits the viewport instead of scrolling. */
+.app:has(.grounding-scene) { height: calc(100dvh - 56px); max-height: calc(100dvh - 56px); overflow: hidden; }
+.app:has(.grounding-scene) .main { min-height: 0; overflow: hidden; }
+.grounding-scene { display: flex; flex-direction: column; height: 100%; min-height: 0; overflow: hidden; padding-top: 8px; padding-bottom: 0; }
 .grounding-scene .scene-recognition { flex-shrink: 0; min-height: 0; }
-.grounding-scene .companion { flex: 1 1 252px; min-height: 0; max-height: 252px; margin-top: 8px; }
+.grounding-scene .companion { flex: 1 1 auto; min-height: 0; max-height: 200px; margin-top: 4px; }
 .grounding-scene .thought-cloud { flex-shrink: 0; white-space: pre-wrap; margin-bottom: 10px; padding: 10px 18px; }
-.grounding-scene .invitation-stage { flex: 1 0 auto; }
-.grounding-scene .invitation-text { min-height: 0; }
-.grounding-scene .grounding-controls { margin-top: auto; padding-top: 2px; }
+.grounding-scene .invitation-stage { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; }
+.grounding-scene .invitation-text { min-height: 0; flex: 0 1 auto; }
+.grounding-scene .grounding-controls { margin-top: auto; padding-top: 16px; flex-shrink: 0; }
 .invitation-paragraph { display: block; }
-.invitation-paragraph + .invitation-paragraph { margin-top: 16px; }
+.invitation-paragraph + .invitation-paragraph { margin-top: 10px; }
 .grounding-scene--long .thought-cloud { font-size: 12px; line-height: 1.4; }
 .grounding-scene--long .invitation-text { font-size: 21px; }
-@media (max-width: 600px) { .app:has(.grounding-scene) { height: 100dvh; } }
+@media (max-width: 600px) { .app:has(.grounding-scene) { height: 100dvh; max-height: 100dvh; } }
 
 .btn--comfort { background: #e9e2f5; color: #8065bf; border: 1px solid #f8f7fb; box-shadow: 0 3px 10px #74668d05; }
 .btn--comfort:hover { background: #eae5f4; color: #7860ad; }
@@ -917,13 +917,22 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .grounding-scene--done .grounding-controls { gap: 10px; margin-top: 10px; }
 .grounding-scene--done .companion { flex: 0 1 148px; max-height: 148px; margin-top: 4px; }
 .grounding-scene--done .sensory-symbol { margin-bottom: 8px; }
-.scene-voice { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; margin: 14px 0 0; padding: 0; border: 1px solid #f8f7fb; border-radius: 50%; background: #f1eff6; color: #b5a6e8; box-shadow: 0 3px 10px #74668d05; cursor: pointer; }
+/* Spoken guidance sits under the invitation so the scene stays one page tall. */
+.scene-voice { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; margin: 12px 0 0; padding: 0; border: 1px solid #f8f7fb; border-radius: 50%; background: #f1eff6; color: #b5a6e8; box-shadow: 0 3px 10px #74668d05; cursor: pointer; }
 .scene-voice:hover { background: #eae5f4; color: #9a87d2; }
 .scene-voice[aria-pressed='false'] { color: #b4aebd; }
 .scene-voice svg { width: 22px; height: 22px; }
 .sensory-symbol.is-speaking { animation: symbol-breathe 3.4s ease-in-out infinite; }
 @keyframes symbol-breathe { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
+.scene-suggestion { display: flex; flex-direction: column; gap: 6px; max-width: 420px; margin: 8px auto 0; padding: 10px 16px; border: 1px solid #fff; border-radius: 20px; background: #ffffff8c; color: #5f5669; font-size: 14px; line-height: 1.45; text-align: center; }
+.scene-suggestion__eyebrow { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: #9a90a6; }
 @media (prefers-reduced-motion: reduce) { .sensory-symbol.is-speaking { animation: none; } }
+
+html:has(.grounding-scene), body:has(.grounding-scene) { overflow: hidden; }
+.scene-recognition { min-width: 0; max-width: 100%; overflow-wrap: anywhere; }
+.grounding-scene .invitation-text { min-height: 0; font-size: clamp(22px, 4.6vw, 25px); }
+.grounding-scene .sensory-symbol { margin-bottom: 8px; }
+.app:has(.grounding-scene) .topbar { flex-shrink: 0; }
 
 /* The writing step stays inside the screen. The card shrinks instead of scrolling the page. */
 html:has(.write-screen),

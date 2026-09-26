@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { fallbackGrounding, validateGrounding, type GroundingExperience } from '../shared/grounding.mjs'
+import { acceptSuggestion } from '../shared/organised.mjs'
 import { needsHumanSupport, mentionsNewOrWorseningSymptoms } from './lib/safety'
 import { HelpDialog } from './components/HelpDialog'
 import { Welcome } from './screens/Welcome'
@@ -14,6 +15,7 @@ export default function App() {
   const [feeling, setFeeling] = useState('Unsure')
   const [text, setText] = useState('')
   const [experience, setExperience] = useState<GroundingExperience | null>(null)
+  const [suggestion, setSuggestion] = useState<string | null>(null)
   const [groundingStep, setGroundingStep] = useState(0)
   const [support, setSupport] = useState<SupportReason>('urgent')
   const [helpOpen, setHelpOpen] = useState(false)
@@ -26,6 +28,7 @@ export default function App() {
     setText('')
     setFeeling('Unsure')
     setExperience(null)
+    setSuggestion(null)
     setBusy(false)
     setScreen('welcome')
   }
@@ -34,6 +37,7 @@ export default function App() {
     setText('')
     setFeeling('Unsure')
     setExperience(null)
+    setSuggestion(null)
     setBusy(false)
     setScreen('support')
   }
@@ -47,6 +51,7 @@ export default function App() {
     request.current = controller
     const timeout = window.setTimeout(() => controller.abort(), 10000)
     let next = fallbackGrounding(original)
+    let step: string | null = null
     try {
       const response = await fetch('/api/grounding', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -57,12 +62,14 @@ export default function App() {
         if (request.current !== controller) return
         if (data.support === 'urgent' || data.support === 'symptoms') return showSupport(data.support)
         next = validateGrounding(data.experience, original) ?? next
+        step = acceptSuggestion(data.suggestion)
       }
     } catch { /* Offline and invalid responses use the predefined sensory invitations. */ }
     finally { window.clearTimeout(timeout) }
     if (request.current !== controller) return
     request.current = null
     setExperience(next)
+    setSuggestion(step)
     setGroundingStep(0)
     setBusy(false)
     setScreen('grounding')
@@ -88,10 +95,11 @@ export default function App() {
         {screen === 'write' && <Write text={text} onChange={setText} onSubmit={submit} onSkip={() => {
           setText('')
           setExperience(fallbackGrounding(''))
+          setSuggestion(null)
           setGroundingStep(0)
           setScreen('grounding')
         }} busy={busy} />}
-        {screen === 'grounding' && experience && <Grounding experience={experience} onClose={reset} step={groundingStep} setStep={setGroundingStep} />}
+        {screen === 'grounding' && experience && <Grounding experience={experience} suggestion={suggestion} onClose={reset} step={groundingStep} setStep={setGroundingStep} />}
         {screen === 'support' && <HumanSupport reason={support} onRestart={reset} />}
       </main>
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />

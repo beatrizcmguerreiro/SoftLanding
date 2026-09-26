@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react'
 
 
-export function ThoughtDeck({ text, onChange, disabled, error, describedBy, onDictate, listening, busy }: {
+export function ThoughtDeck({ text, onChange, disabled, error, describedBy, onDictate, listening, transcribing, busy }: {
   text: string; onChange: (text: string) => void; disabled: boolean; error: boolean; describedBy: string
-  onDictate: () => void; listening: boolean; busy: boolean
+  onDictate: () => void; listening: boolean; transcribing: boolean; busy: boolean
 }) {
   const [editing, setEditing] = useState(false)
   const input = useRef<HTMLTextAreaElement>(null)
@@ -12,8 +12,9 @@ export function ThoughtDeck({ text, onChange, disabled, error, describedBy, onDi
       <div className="thought-deck__stack" aria-hidden="true" />
       <article className={`thought-deck__card${editing ? ' is-editing' : ''}`} style={{ transform: `rotate(${editing ? 0 : 4}deg)` }} onClick={() => input.current?.focus()}>
         <div className="thought-deck__header">
-          <span className="thought-deck__eyebrow">Write your worries</span>
-          <button className="thought-deck__mic" type="button" disabled={busy} aria-label={listening ? 'Stop dictation' : 'Use my voice'} aria-pressed={listening}
+          <span className="thought-deck__eyebrow">{listening ? 'Listening…' : transcribing ? 'Writing your words…' : 'Write your worries'}</span>
+          <button className={`thought-deck__mic${transcribing ? ' is-transcribing' : ''}`} type="button" disabled={busy || transcribing}
+            aria-label={listening ? 'Stop dictation' : 'Use my voice'} aria-pressed={listening}
             onMouseDown={event => event.preventDefault()}
             onClick={event => { event.stopPropagation(); onDictate() }}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" aria-hidden="true">
