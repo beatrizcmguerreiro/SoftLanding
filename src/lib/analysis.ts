@@ -187,7 +187,11 @@ export function validateAnalysis(result: unknown, originalText: string): Analysi
 
 export type AnalysisResult = { analysis: Analysis; source: AnalysisSource }
 
-export async function analyzeThoughts(text: string, timeoutMs = 9000): Promise<AnalysisResult> {
+export async function analyzeThoughts(
+  text: string,
+  { useAi = true, timeoutMs = 9000 } = {},
+): Promise<AnalysisResult> {
+  if (!useAi) return { analysis: safeFallback(text), source: 'local' }
   try {
     const response = await fetch('/api/analyze', {
       method: 'POST',

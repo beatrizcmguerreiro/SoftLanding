@@ -53,7 +53,10 @@ export function ThoughtBalloon({ id, label, index, selected, setDown, onToggle, 
     const s = start.current
     if (!s || s.pointerId !== e.pointerId) return
     start.current = null
-    if (dragged.current && !cancelled && Math.abs(offset) >= DRAG_THRESHOLD) {
+    const dx = e.clientX - s.x
+    const horizontal = Math.abs(dx) > Math.abs(e.clientY - s.y)
+    if (!cancelled && horizontal && Math.abs(dx) >= DRAG_THRESHOLD) {
+      dragged.current = true
       onSetDown()
     }
     setOffset(0)

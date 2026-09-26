@@ -69,7 +69,7 @@ export default function App() {
     const slowTimer = window.setTimeout(() => setSlow(true), SLOW_NOTICE_MS)
     const minDelay = new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : ORGANIZE_MIN_MS))
 
-    const [result] = await Promise.all([analyzeThoughts(current), minDelay])
+    const [result] = await Promise.all([analyzeThoughts(current, { useAi: aiAvailable }), minDelay])
     window.clearTimeout(slowTimer)
     if (id !== run.current) return
 
@@ -84,7 +84,7 @@ export default function App() {
     setSource(result.source)
     setState('organized')
     announce('Os pensamentos foram organizados em duas áreas: Posso fazer e Ainda não posso saber.')
-  }, [text, reset, announce])
+  }, [text, aiAvailable, reset, announce])
 
   const finish = () => {
     reset()
