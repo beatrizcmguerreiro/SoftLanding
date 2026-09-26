@@ -33,7 +33,7 @@ export function Feeling({ value, onChange, onContinue }: { value: string; onChan
             if (next !== null) { event.preventDefault(); choose(next); (track.current?.children[next] as HTMLButtonElement)?.focus({ preventScroll: true }) }
           }}>{feeling}</button>)}
       </div>
-      <p className="feeling-hint">Slide to choose · there’s no wrong answer</p>
+      <p className="feeling-hint">Slide to choose - there's no wrong answer.</p>
     </div>
     <button className="btn btn--primary" onClick={onContinue}>Continue</button>
   </section>

@@ -10,7 +10,7 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
   return (
     <section className={`grounding-scene${done ? ' grounding-scene--done' : ''}`} aria-label="A grounding moment">
       <div className="scene-light" aria-hidden="true" />
-      <p className="scene-recognition">Let’s come back to this moment, one sense at a time.</p>
+      <p className="scene-recognition">Let's find somewhere soft to land.</p>
       <Companion expression="attentive" />
       <div className="invitation-stage">
         <div className="sensory-symbol" aria-hidden="true">
@@ -19,13 +19,13 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
           </svg>
         </div>
         <h1 className="invitation-text" ref={invitation} tabIndex={-1} key={step}>
-          {done ? 'The thought can still be there. And so can you.' : experience.grounding[keys[step]]}
+          {done ? 'The thought can still be there. And so can you.' : experience.grounding[keys[step]].split(/(?<=[.!?])\s+/).map((sentence, index) => <span className="invitation-paragraph" key={index}>{sentence}</span>)}
         </h1>
         <div className="grounding-controls">
           {done ? <button className="btn btn--primary" onClick={onClose}>Close</button> : <>
-            <button className="btn btn--comfort" onClick={() => setStep(step + 1)}>I feel better</button>
+            <button className="btn btn--comfort" onClick={() => setStep(step + 1)}>Guide me on!</button>
             <div className="grounding-secondary">
-              <button className="btn btn--secondary" onClick={() => setStep(step + 1)}>Skip</button>
+              <button className="btn btn--secondary" onClick={() => setStep(keys.length)}>Skip for now</button>
             </div>
           </>}
         </div>
