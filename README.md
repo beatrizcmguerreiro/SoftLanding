@@ -1,1 +1,1 @@
-# SKYHACK26
+SoftLanding is a quiet space for the moments between a medical test and its results. Write down a worry, watch it float away, and return to the present—without needing to have all the answers yet.
