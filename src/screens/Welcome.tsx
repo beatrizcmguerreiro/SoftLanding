@@ -30,7 +30,7 @@ export function Welcome({ onStart, onHelp }: Props) {
           Start
         </button>
         <button type="button" className="btn btn--secondary" onClick={onHelp}>
-          I need help now
+          I need immediate help
         </button>
       </div>
 

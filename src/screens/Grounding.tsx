@@ -4,6 +4,9 @@ import { Companion } from '../components/Companion'
 import { useNarration } from '../lib/narration'
 
 const CLOSING_LINE = 'The thought can still be there. And so can you.'
+const AFTER = ['A little lighter', 'About the same', 'Not sure'] as const
+type After = (typeof AFTER)[number]
+const TONE: Record<After, string> = { 'A little lighter': 'green', 'About the same': 'yellow', 'Not sure': 'red' }
 
 type Props = {
   experience: GroundingExperience
@@ -17,14 +20,20 @@ export function Grounding({ experience, suggestion, onClose, step, setStep }: Pr
   const invitation = useRef<HTMLHeadingElement>(null)
   const keys = ['touch', 'see', 'hear'] as const
   const done = step === keys.length
+  const [after, setAfter] = useState<After | null>(null)
   const [voice, setVoice] = useState(true)
   const line = done ? CLOSING_LINE : experience.grounding[keys[step]]
   const speaking = useNarration(line, voice)
   useEffect(() => { invitation.current?.focus() }, [step])
+  const chooseAfter = (option: After) => setAfter(option)
+  const replay = () => {
+    setAfter(null)
+    setStep(0)
+  }
   return (
     <section className={`grounding-scene${done ? ' grounding-scene--done' : ''}`} aria-label="A grounding moment">
       <div className="scene-light" aria-hidden="true" />
-      <p className="scene-recognition">{experience.recognition}</p>
+      <p className="scene-recognition">{done ? 'Take a moment before you move on.' : "Let's find somewhere soft to land."}</p>
       <Companion expression="attentive" />
       <div className="invitation-stage">
         <div className={`sensory-symbol${speaking ? ' is-speaking' : ''}`} aria-hidden="true">
@@ -42,6 +51,27 @@ export function Grounding({ experience, suggestion, onClose, step, setStep }: Pr
             {voice ? <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" /> : <path d="m16 9.5 5 5m0-5-5 5" />}
           </svg>
         </button>
+        {done && (
+          <div className="closing-checkin">
+            <p id="closing-feeling" className="closing-checkin__prompt">How are you feeling now?</p>
+            <div className="closing-checkin__options" role="radiogroup" aria-labelledby="closing-feeling">
+              {AFTER.map((option, index) => (
+                <button type="button" role="radio" key={option} className={`btn closing-checkin__option closing-checkin__option--${TONE[option]}`} aria-checked={after === option}
+                  tabIndex={after === option || (after === null && index === 0) ? 0 : -1}
+                  onClick={() => chooseAfter(option)}
+                  onKeyDown={event => {
+                    const next = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? (index + 1) % AFTER.length : event.key === 'ArrowUp' || event.key === 'ArrowLeft' ? (index + AFTER.length - 1) % AFTER.length : null
+                    if (next === null) return
+                    event.preventDefault()
+                    chooseAfter(AFTER[next])
+                    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[next]?.focus()
+                  }}>
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {done && suggestion && (
           <p className="scene-suggestion">
             <span className="scene-suggestion__eyebrow">One thing you could do</span>
@@ -49,7 +79,10 @@ export function Grounding({ experience, suggestion, onClose, step, setStep }: Pr
           </p>
         )}
         <div className="grounding-controls">
-          {done ? <button className="btn btn--primary" onClick={onClose}>Close</button> : <>
+          {done ? after && <>
+            {after !== 'A little lighter' && <button type="button" className="btn btn--comfort" onClick={replay}>Try another grounding moment</button>}
+            <button type="button" className="btn btn--primary" onClick={onClose}>Back to home.</button>
+          </> : <>
             <button className="btn btn--comfort" onClick={() => setStep(step + 1)}>Guide me on!</button>
             <div className="grounding-secondary">
               <button className="btn btn--secondary" onClick={() => setStep(keys.length)}>Skip for now</button>

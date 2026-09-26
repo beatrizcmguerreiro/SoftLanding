@@ -19,11 +19,11 @@ export function thoughtExcerpt(text) {
 }
 export function fallbackGrounding(text) {
   return {
-    recognition: 'While you wait, take a moment to notice what’s around you.',
+    recognition: 'Lets find somewhere soft to land.',
     thought_label: thoughtExcerpt(text),
     grounding: {
-      touch: 'Take deep breaths and rest your fingertips on a nearby surface. Notice whether it feels smooth, rough, warm or cool.',
-      see: 'Keep going - deep breaths. Look for one colour around you and let your eyes follow the shape of something in that colour.',
+      touch: 'Take deep breaths. Rest your fingertips on a nearby surface. Notice whether it feels smooth, rough, warm or cool.',
+      see: 'Keep going - deep breaths. Look for one colour around you. Let your eyes follow and find the shape of something in that colour.',
       hear: 'One more. Listen for one sound nearby and notice whether it stays steady or comes and goes.',
     },
   }

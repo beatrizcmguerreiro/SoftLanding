@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react'
 import { Companion, type Expression } from '../components/Companion'
 import { useFocusOnMount } from '../components/useFocusOnMount'
+import { useNarration } from '../lib/narration'
+
+const LINE = 'How are you feeling right now? Select the closest match.'
 
 const feelings = ['Anxious', 'Overwhelmed', 'Sad', 'Unsure', 'Okay', 'Calm', 'Happy']
 const expressions: Record<string, Expression> = { Anxious: 'anxious', Overwhelmed: 'overwhelmed', Sad: 'sad', Unsure: 'unsure', Okay: 'okay', Calm: 'calm', Happy: 'happy' }
@@ -9,6 +12,7 @@ export function Feeling({ value, onChange, onContinue }: { value: string; onChan
   const heading = useFocusOnMount<HTMLHeadingElement>()
   const track = useRef<HTMLDivElement>(null)
   const selected = Math.max(0, feelings.indexOf(value))
+  useNarration(LINE, true)
   useEffect(() => {
     const el = track.current
     if (el) el.scrollLeft = selected * 112
