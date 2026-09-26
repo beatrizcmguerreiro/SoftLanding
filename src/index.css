@@ -903,3 +903,61 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 .btn--comfort { background: #e9e2f5; color: #8065bf; border: 1px solid #f8f7fb; box-shadow: 0 3px 10px #74668d05; }
 .btn--comfort:hover { background: #eae5f4; color: #7860ad; }
 
+/* The writing step stays inside the screen. The card shrinks instead of scrolling the page. */
+html:has(.write-screen),
+body:has(.write-screen) {
+  height: 100%;
+  overflow: hidden;
+}
+.app:has(.write-screen) {
+  height: calc(100dvh - 56px);
+  max-height: calc(100dvh - 56px);
+  overflow: hidden;
+}
+.app:has(.write-screen) .main {
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 0;
+  overflow: hidden;
+}
+.app:has(.write-screen) .write-screen {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+.write-screen .write {
+  height: 100%;
+  min-height: 0;
+}
+.write-screen .field:has(.thought-deck) {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+.write-screen .field:has(.thought-deck) .thought-deck {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.write-screen .thought-deck__card {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  max-height: 300px;
+}
+.write-screen .thought-deck__phrase,
+.write-screen .thought-deck__input {
+  overflow: hidden;
+}
+@media (max-width: 600px) {
+  .app:has(.write-screen) {
+    height: 100dvh;
+    max-height: 100dvh;
+  }
+}
+
