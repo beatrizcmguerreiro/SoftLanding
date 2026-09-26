@@ -11,6 +11,7 @@ const expressions: Record<string, Expression> = { Anxious: 'anxious', Overwhelme
 export function Feeling({ value, onChange, onContinue }: { value: string; onChange: (value: string) => void; onContinue: () => void }) {
   const heading = useFocusOnMount<HTMLHeadingElement>()
   const track = useRef<HTMLDivElement>(null)
+  const scrollingTo = useRef<number | null>(null)
   const selected = Math.max(0, feelings.indexOf(value))
   useNarration(LINE, true)
   useEffect(() => {
@@ -19,6 +20,7 @@ export function Feeling({ value, onChange, onContinue }: { value: string; onChan
   }, [])
   const choose = (index: number) => {
     onChange(feelings[index])
+    scrollingTo.current = index
     track.current?.scrollTo({ left: index * 112, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
   }
   return <section className="feeling-screen" aria-labelledby="feeling-title">
@@ -29,6 +31,10 @@ export function Feeling({ value, onChange, onContinue }: { value: string; onChan
       <div className="feeling-wave" aria-hidden="true">{Array.from({ length: 35 }, (_, i) => <i key={i} style={{ height: `${18 + 52 * Math.exp(-(((i - 17) / 7) ** 2))}px` }} />)}</div>
       <div className="feeling-track" ref={track} role="radiogroup" aria-label="How you feel" onScroll={event => {
         const index = Math.max(0, Math.min(feelings.length - 1, Math.round(event.currentTarget.scrollLeft / 112)))
+        if (scrollingTo.current != null) {
+          if (index === scrollingTo.current) scrollingTo.current = null
+          return
+        }
         if (feelings[index] !== value) onChange(feelings[index])
       }}>
         {feelings.map((feeling, index) => <button key={feeling} type="button" role="radio" aria-checked={value === feeling} tabIndex={value === feeling ? 0 : -1}

@@ -870,6 +870,13 @@ html.framed-app { background: var(--app-gradient); background-attachment: fixed;
 /* Feeling check-in: a centred, snapping horizontal dial. */
 .feeling-screen { display: flex; flex-direction: column; align-items: center; width: 100%; flex: 1; padding: 4px 0 0; }
 .feeling-screen .companion { height: clamp(220px, 32dvh, 290px); width: calc(100% + 32px); margin: 0 -16px 18px; }
+.companion__face--in { animation: companion-face-in 280ms ease-out both; }
+.companion__face--out { animation: companion-face-out 220ms ease-in both; }
+@keyframes companion-face-in { from { opacity: 0; } }
+@keyframes companion-face-out { to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .companion__face--in, .companion__face--out { animation: none; }
+}
 .feeling-screen .title { font-size: 30px; line-height: 1.08; text-align: center; margin: 0; }
 .feeling-caption { font-size: 16px; color: #777080; margin: 12px 0 0; }
 .feeling-picker { width: 100%; margin: auto 0; padding: 18px 0; }
