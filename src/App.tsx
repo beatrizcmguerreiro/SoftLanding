@@ -1,107 +1,81 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
-import type { AppState, GroundingContent, SupportReason } from './lib/types'
-import { fetchAiAvailable, requestGrounding } from './lib/grounding'
-import { supportReason as detectSupportReason } from './lib/safety'
+import { useRef, useState } from 'react'
+import { fallbackGrounding, validateGrounding, type GroundingExperience } from '../shared/grounding.mjs'
+import { needsHumanSupport, mentionsNewOrWorseningSymptoms } from './lib/safety'
 import { HelpDialog } from './components/HelpDialog'
 import { Welcome } from './screens/Welcome'
 import { Write } from './screens/Write'
 import { Grounding } from './screens/Grounding'
 import { HumanSupport } from './screens/HumanSupport'
-
-const MIN_WAIT_MS = 800
-const SLOW_NOTICE_MS = 1500
-
-function prefersReducedMotion() {
-  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
-}
+import type { SupportReason } from './lib/types'
 
 export default function App() {
-  const [state, setState] = useState<AppState>('welcome')
+  const [screen, setScreen] = useState<'welcome' | 'write' | 'grounding' | 'support'>('welcome')
   const [text, setText] = useState('')
-  const [content, setContent] = useState<GroundingContent | null>(null)
-  const [supportReason, setSupportReason] = useState<SupportReason>('urgent')
-  const [aiAvailable, setAiAvailable] = useState(false)
+  const [experience, setExperience] = useState<GroundingExperience | null>(null)
+  const [support, setSupport] = useState<SupportReason>('urgent')
   const [helpOpen, setHelpOpen] = useState(false)
-  const [slow, setSlow] = useState(false)
-  const run = useRef(0)
+  const [busy, setBusy] = useState(false)
+  const request = useRef<AbortController | null>(null)
 
-  useEffect(() => {
-    fetchAiAvailable().then(setAiAvailable)
-  }, [])
-
-  const reset = useCallback(() => {
-    run.current += 1
+  const reset = () => {
+    request.current?.abort()
+    request.current = null
     setText('')
-    setContent(null)
-    setSlow(false)
-  }, [])
-
-  const showSupport = useCallback(
-    (reason: SupportReason) => {
-      setSupportReason(reason)
-      reset()
-      setState('human-support')
-    },
-    [reset],
-  )
-
-  const submit = useCallback(async () => {
-    const current = text.trim()
-    if (!current) return
-
-    const reason = detectSupportReason(current)
-    if (reason) return showSupport(reason)
-
-    const id = ++run.current
-    setText('')
-    setContent(null)
-    setSlow(false)
-    setState('grounding')
-    const slowTimer = window.setTimeout(() => setSlow(true), SLOW_NOTICE_MS)
-    const minDelay = new Promise((r) => setTimeout(r, prefersReducedMotion() ? 0 : MIN_WAIT_MS))
-
-    const [result] = await Promise.all([requestGrounding(current, { useAi: aiAvailable }), minDelay])
-    window.clearTimeout(slowTimer)
-    if (id !== run.current) return
-
-    if (result.kind === 'support') return showSupport(result.reason)
-    setSlow(false)
-    setContent(result.content)
-  }, [text, aiAvailable, showSupport])
-
-  const restart = () => {
-    reset()
-    setState('welcome')
+    setExperience(null)
+    setBusy(false)
+    setScreen('welcome')
   }
-
+  const showSupport = (reason: SupportReason) => {
+    setSupport(reason)
+    setText('')
+    setExperience(null)
+    setBusy(false)
+    setScreen('support')
+  }
+  const submit = async () => {
+    if (busy || !text.trim()) return
+    const original = text.trim()
+    if (needsHumanSupport(original)) return showSupport('urgent')
+    if (mentionsNewOrWorseningSymptoms(original)) return showSupport('symptoms')
+    setBusy(true)
+    const controller = new AbortController()
+    request.current = controller
+    const timeout = window.setTimeout(() => controller.abort(), 10000)
+    let next = fallbackGrounding(original)
+    try {
+      const response = await fetch('/api/grounding', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: original }), signal: controller.signal,
+      })
+      if (response.ok) {
+        const data = await response.json()
+        if (request.current !== controller) return
+        if (data.support === 'urgent' || data.support === 'symptoms') return showSupport(data.support)
+        next = validateGrounding(data.experience, original) ?? next
+      }
+    } catch { /* Offline and invalid responses use the predefined sensory invitations. */ }
+    finally { window.clearTimeout(timeout) }
+    if (request.current !== controller) return
+    request.current = null
+    setExperience(next)
+    setBusy(false)
+    setScreen('grounding')
+  }
   return (
     <div className="app">
       <header className="topbar">
-        <span className="wordmark">SoftLanding</span>
-        {state === 'write' && (
-          <button type="button" className="link link--small" onClick={() => setHelpOpen(true)}>
-            Help now
-          </button>
-        )}
+        <span className="wordmark">SoftLanding<span className="wordmark__dot">.</span></span>
       </header>
-
-      <main className="main" key={state}>
-        {state === 'welcome' && <Welcome onStart={() => setState('write')} onHelp={() => setHelpOpen(true)} />}
-        {state === 'write' && (
-          <Write
-            text={text}
-            aiAvailable={aiAvailable}
-            onChange={setText}
-            onSubmit={submit}
-            onBack={() => setState('welcome')}
-          />
-        )}
-        {state === 'grounding' && (
-          <Grounding content={content} slow={slow} onClose={restart} onHelp={() => setHelpOpen(true)} />
-        )}
-        {state === 'human-support' && <HumanSupport reason={supportReason} onRestart={restart} />}
+      <main className="main" key={screen}>
+        {screen === 'welcome' && <Welcome onStart={() => setScreen('write')} onHelp={() => setHelpOpen(true)} />}
+        {screen === 'write' && <Write text={text} onChange={setText} onSubmit={submit} onSkip={() => {
+          setText('')
+          setExperience(fallbackGrounding(''))
+          setScreen('grounding')
+        }} busy={busy} />}
+        {screen === 'grounding' && experience && <Grounding experience={experience} onClose={reset} onBack={() => setScreen('write')} />}
+        {screen === 'support' && <HumanSupport reason={support} onRestart={reset} />}
       </main>
-
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
     </div>
   )

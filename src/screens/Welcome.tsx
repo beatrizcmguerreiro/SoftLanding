@@ -1,4 +1,5 @@
 import { useFocusOnMount } from '../components/useFocusOnMount'
+import { Companion } from '../components/Companion'
 
 type Props = {
   onStart: () => void
@@ -8,13 +9,14 @@ type Props = {
 export function Welcome({ onStart, onHelp }: Props) {
   const heading = useFocusOnMount<HTMLHeadingElement>()
   return (
-    <section className="screen screen--center" aria-labelledby="welcome-title">
-      <svg className="stones" viewBox="0 0 120 100" aria-hidden="true" focusable="false">
-        <ellipse className="stones__shadow" cx="60" cy="93" rx="44" ry="4" />
-        <path className="stones__big" d="M18 80c0-12 18-20 42-20s42 8 42 20-18 12-42 12-42 0-42-12z" />
-        <path className="stones__mid" d="M32 52c0-9 12-15 28-15s28 6 28 15-12 10-28 10-28-1-28-10z" />
-        <path className="stones__small" d="M45 28c0-6 7-10 15-10s15 4 15 10-7 7-15 7-15-1-15-7z" />
-      </svg>
+    <section className="screen screen--center welcome-screen" aria-labelledby="welcome-title">
+      <div className="welcome-art" aria-hidden="true">
+        <div className="reflection-sheet reflection-sheet--back" />
+        <div className="reflection-note reflection-note--cream"><span className="note-spark">✦</span><p>A little space.<br />A moment for you.</p><span className="note-caption">HERE, AT YOUR PACE</span></div>
+        <div className="reflection-note reflection-note--lilac"><Companion small /><p>One thought.<br />A softer landing.</p><span className="note-caption">ONE MOMENT AT A TIME</span></div>
+        <span className="floating-token floating-token--heart">♥</span>
+        <span className="floating-token floating-token--sun">✦</span>
+      </div>
 
       <h1 id="welcome-title" className="title title--display" ref={heading} tabIndex={-1}>
         There are things you cannot know yet.
@@ -27,7 +29,7 @@ export function Welcome({ onStart, onHelp }: Props) {
         <button type="button" className="btn btn--primary" onClick={onStart}>
           Start
         </button>
-        <button type="button" className="link" onClick={onHelp}>
+        <button type="button" className="btn btn--secondary" onClick={onHelp}>
           I need help now
         </button>
       </div>

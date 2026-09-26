@@ -13,11 +13,6 @@ export function SupportContacts() {
           <span className="contact__label">Health guidance in Portugal, 24 hours a day</span>
         </a>
       </li>
-      <li className="contact contact--plain">
-        <span className="contact__label">
-          Call or message someone you trust and tell them you don’t want to be alone with this right now.
-        </span>
-      </li>
     </ul>
   )
 }

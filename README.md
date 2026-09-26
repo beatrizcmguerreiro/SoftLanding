@@ -1,35 +1,53 @@
-SoftLanding is a quiet space for the moments between a medical test and its results. Write down a worry, watch it float away, and return to the present—without needing to have all the answers yet.
+# SoftLanding
 
-## What it is
+A quiet three-screen demo for the wait between a medical test and its results. It offers sensory grounding, never medical answers.
 
-A mobile-first web prototype in English that implements [`softlanding-plan-en.md`](softlanding-plan-en.md) using the visual direction in [`visual-style-guide-en.md`](visual-style-guide-en.md). The Portuguese originals are kept alongside them.
+## Flow
 
-Flow, in three screens: splash → the person writes (or dictates) what is worrying them → a personalised grounding experience. On the third screen a short recognition line appears, the person’s thought floats into the background as a balloon, and three sensory invitations (touch, see, hear) are shown one at a time with “Continue” or “Skip”, ending with “The thought can still be there. And so can you.” It does not answer the worry, interpret tests or give medical answers.
+1. Splash screen.
+2. Write or dictate a fictional concern. Dictation is available in browsers with speech recognition; typing and device dictation remain alternatives.
+3. One grounding scene: a brief acknowledgement, a gently receding thought balloon, a soft light, and one invitation at a time in touch → see → hear order.
 
-## Running it
+“I did it” and “Skip” advance. “Go back” revisits the previous invitation, or returns to writing from the first. Nothing advances automatically. The final message is exactly “The thought can still be there. And so can you.” Close clears the session and returns to the splash screen.
 
-```bash
+## Run
+
+```sh
 npm install
-npm run dev        # http://localhost:5173
-npm test           # tests for grounding validation, fallbacks and safeguards
-npm run build && npm start   # production server on http://localhost:4173
+npm run dev
+npm test
+npm run build
+npm start
 ```
 
-### Optional AI
+Development runs at http://localhost:5173; production runs at http://localhost:4173.
 
-With no configuration, the third screen uses three **predefined invitations** (fallback). To have the AI write personalised invitations, set the key on the server only:
+On this Windows demo machine, if Node is not on PATH, run from the project directory:
 
-```bash
-ANTHROPIC_API_KEY=... npm run dev     # or: npm run build && ANTHROPIC_API_KEY=... npm start
-# optional: ANTHROPIC_MODEL=<model>
+```powershell
+& "C:\Users\beatr\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin\node.exe" node_modules/vite/bin/vite.js
 ```
 
-The key is only read in `server/analyze.mjs` and never reaches the browser. When the AI is on, the writing screen warns that the text is sent to an external service (Anthropic). Never commit `.env` files; they are ignored by `.gitignore`.
+## AI and fallback
 
-## What is real and what is simulated
+Set `ANTHROPIC_API_KEY` in the server environment or an ignored local `.env` for Vite. Optional: `ANTHROPIC_MODEL`. Restart the dev server after changing configuration. The production server reads environment variables. Never prefix a secret with `VITE_` or commit it.
 
-- **Working:** the three screens plus the human-support state; server-side AI request (`POST /api/grounding`, temperature 0.8 so wording varies); validation of AI output in `src/lib/grounding.ts` (exactly `touch`/`see`/`hear`, at most two sentences and 140 characters each, no diagnoses, probabilities, treatments, test talk or false reassurance; a faithful thought label). If the invitations fail validation, all three are replaced by the predefined ones; the recognition line and label fall back individually. Keyboard, `aria-live`, `prefers-reduced-motion`.
-- **Simple safeguards, not triage:** `shared/safety.mjs` matches obvious English (and some Portuguese) phrases about danger or new/worsening symptoms. It runs in the browser before anything is sent and again on the server before calling the model; the model can also set `human_support`. Any of these replaces the grounding with support contacts. A public version would need clinical, privacy and safety review.
-- **No data stored:** text lives only in memory and is cleared when the grounding starts; only the short thought label stays on screen until “Close”. No localStorage, analytics, accounts or database. Use fictional concerns in demos.
-- **Support contacts are for Portugal** (112 and SNS 24), as in the plan.
-- **Schema addition:** the model’s JSON may include `"human_support": true`, which the server passes through as a flag and never as grounding.
+`POST /api/grounding` calls Anthropic server-side. The requested model JSON is:
+
+```json
+{"recognition":"string","thought_label":"string","grounding":{"touch":"string","see":"string","hear":"string"}}
+```
+
+The server returns `{ experience, source }`, or `{ support: "urgent" | "symptoms" }`. `GET /api/status` reports whether a server key is configured, not whether the upstream service is healthy.
+
+Shared validation checks exact keys, three distinct modalities, sensory language, sentence and word limits, faithful extractive labels, and prohibited clinical/reassurance language. Rejected output, timeouts and unavailable APIs use three predefined invitations. These conservative text checks cannot guarantee the absence of every possible unsafe semantic claim. Personalisation is prompt-driven and requires a working API key; the fallback intentionally does not pretend to be generated.
+
+## Privacy and support
+
+Use fictional concerns for the demo. Text is held only in memory, never logged or saved by this app, and cleared on Close or support routing. AI generation sends text to Anthropic. Browser dictation may use an external speech service; the writing screen discloses both. This app does not control those providers’ retention policies.
+
+Simple English and Portuguese phrase checks run before generation on both client and server. Immediate-danger or new/worsening-symptom matches route to human support instead of grounding. These checks are limited safeguards, not clinical triage. Support contacts are explicitly for Portugal (112 and SNS 24).
+
+## Verification
+
+`npm test` covers schema validation, prohibited claims, fallback, server failures and support routing. Browser checks cover the three-screen flow, forward/back/skip, final copy, clearing on Close, support routing, and the mobile scene. Live microphone and live model output require manual verification with the relevant permissions and server key.

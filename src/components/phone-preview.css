@@ -1,0 +1,24 @@
+.phone-preview { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px 20px; background: radial-gradient(ellipse at 50% 90%, #b4a5ed 0%, transparent 58%), #30303d; }
+.phone-preview__stage { position: relative; flex-shrink: 0; }
+.phone-device { position: absolute; top: 0; left: 0; width: 419px; height: 878px; padding: 11px; border: 2px solid #cccbd0; border-radius: 61px; background: #101011; box-shadow: 0 0 0 2px #525259, inset 0 0 0 2px #373739, 0 24px 50px #0007; transform-origin: top left; }
+.phone-device__screen { width: 393px; height: 852px; border-radius: 48px; overflow: hidden; background: var(--app-gradient); display: flex; flex-direction: column; }
+.phone-status { height: 51px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font: 600 13px var(--font-ui); color: #171717; position: relative; background: transparent; }
+.phone-island { position: absolute; width: 120px; height: 32px; border-radius: 30px; background: #080808; top: 10px; left: calc(50% - 60px); }
+.phone-island::after { content: ''; position: absolute; width: 9px; height: 9px; right: 12px; top: 11px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #233354, #080a12); }
+.phone-status__icons { display: flex; align-items: center; gap: 5px; }
+.phone-status__icons svg { width: 16px; height: 12px; }
+.phone-battery { width: 21px; height: 10px; border: 1px solid #777; border-radius: 3px; padding: 1px; background: #252525; background-clip: content-box; }
+.phone-device iframe { display: block; width: 393px; flex: 1; min-height: 0; border: none; background: transparent; }
+.phone-home { height: 22px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: transparent; }
+.phone-home span { width: 125px; height: 5px; border-radius: 8px; background: #171717; }
+.phone-device__switch, .phone-device__volume, .phone-device__power { position: absolute; width: 4px; border-radius: 2px; background: linear-gradient(90deg, #67676c, #babac1, #303035); }
+.phone-device__switch { top: 116px; left: -5px; height: 26px; }
+.phone-device__volume { top: 170px; left: -5px; height: 90px; }
+.phone-device__power { top: 196px; right: -5px; height: 64px; }
+.phone-preview__exit { color: #efedf8; font-size: 12px; text-underline-offset: 4px; }
+
+/* One full-screen iframe lets the native dialog backdrop cover every pixel. */
+.phone-device__screen { position: relative; }
+.phone-device iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+.phone-status { position: absolute; top: 0; left: 0; right: 0; z-index: 2; pointer-events: none; }
+.phone-home { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; pointer-events: none; }

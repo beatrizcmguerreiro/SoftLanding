@@ -1,1 +1,1 @@
-export { mentionsNewOrWorseningSymptoms, needsHumanSupport, supportReason } from '../../shared/safety.mjs'
+export { needsHumanSupport, mentionsNewOrWorseningSymptoms } from '../../shared/safety.mjs'

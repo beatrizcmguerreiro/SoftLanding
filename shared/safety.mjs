@@ -1,10 +1,10 @@
-import { normalize } from './text.mjs'
+const normalize = (text) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').trim()
 
 // Basic keyword safeguards for the demo. This is NOT clinical triage.
-// Shared by the browser and the server so both run the same check.
 // Portuguese patterns are kept alongside English so a Portuguese message is still caught.
 
 const HUMAN_SUPPORT_PATTERNS = [
+  /\b(in immediate danger|in danger|overdos\w*|can'?t breathe|cannot breathe|struggling to breathe|severe chest pain|bleeding heavily)\b/,
   /\bhurt(ing)? myself\b/,
   /\bharm(ing)? myself\b/,
   /\bkill(ing)? myself\b/,
@@ -36,24 +36,13 @@ const SYMPTOM_PATTERNS = [
   /\b(estou|sinto[- ]me) (cada vez )?pior\b/,
 ]
 
-/** @param {string} text */
 export function needsHumanSupport(text) {
   const t = normalize(text)
   return HUMAN_SUPPORT_PATTERNS.some((re) => re.test(t))
 }
 
-/** @param {string} text */
 export function mentionsNewOrWorseningSymptoms(text) {
   const t = normalize(text)
   return SYMPTOM_PATTERNS.some((re) => re.test(t))
 }
 
-/**
- * @param {string} text
- * @returns {'urgent' | 'symptoms' | null}
- */
-export function supportReason(text) {
-  if (needsHumanSupport(text)) return 'urgent'
-  if (mentionsNewOrWorseningSymptoms(text)) return 'symptoms'
-  return null
-}

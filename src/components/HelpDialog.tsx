@@ -9,6 +9,7 @@ type Props = {
 export function HelpDialog({ open, onClose }: Props) {
   const ref = useRef<HTMLDialogElement>(null)
 
+
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
@@ -27,16 +28,14 @@ export function HelpDialog({ open, onClose }: Props) {
       }}
     >
       <div className="sheet__body">
-        <h2 id="help-title" className="sheet__title">
-          Human support
+        <h2 id="help-title" className="sheet__title" tabIndex={-1} autoFocus>
+          Talk to someone
         </h2>
         <p className="sheet__text">
-          This experience doesn’t replace a person. If you need to talk to someone now, these contacts work in
-          Portugal.
+          You don’t have to go through this alone. If you’d like to speak with someone, you can reach out below.
         </p>
         <SupportContacts />
-        <p className="sheet__note">Outside Portugal, use your local emergency number.</p>
-        <button type="button" className="btn btn--secondary" onClick={onClose}>
+        <button type="button" className="btn btn--primary" onClick={onClose}>
           Close panel
         </button>
       </div>
