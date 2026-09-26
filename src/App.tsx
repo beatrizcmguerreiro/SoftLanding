@@ -91,7 +91,7 @@ export default function App() {
           setGroundingStep(0)
           setScreen('grounding')
         }} busy={busy} />}
-        {screen === 'grounding' && experience && <Grounding experience={experience} originalText={text} onClose={reset} step={groundingStep} setStep={setGroundingStep} />}
+        {screen === 'grounding' && experience && <Grounding experience={experience} onClose={reset} step={groundingStep} setStep={setGroundingStep} />}
         {screen === 'support' && <HumanSupport reason={support} onRestart={reset} />}
       </main>
       <HelpDialog open={helpOpen} onClose={() => setHelpOpen(false)} />
