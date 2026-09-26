@@ -35,22 +35,18 @@ export function Grounding({ experience, onClose, step, setStep }: { experience: 
             <p id="closing-feeling" className="closing-checkin__prompt">How are you feeling now?</p>
             <div className="closing-checkin__options" role="radiogroup" aria-labelledby="closing-feeling">
               {AFTER.map((option, index) => (
-                <span className="closing-checkin__choice" key={option}>
-                  {index > 0 && <span className="closing-checkin__dot" aria-hidden="true">·</span>}
-                  <button type="button" role="radio" className="closing-checkin__option" aria-checked={after === option}
-                    tabIndex={after === option || (after === null && index === 0) ? 0 : -1}
-                    onClick={() => chooseAfter(option)}
-                    onKeyDown={event => {
-                      const next = event.key === 'ArrowRight' ? (index + 1) % AFTER.length : event.key === 'ArrowLeft' ? (index + AFTER.length - 1) % AFTER.length : null
-                      if (next === null) return
-                      event.preventDefault()
-                      chooseAfter(AFTER[next])
-                      const choice = event.currentTarget.parentElement?.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[next]
-                      choice?.focus()
-                    }}>
-                    {option}
-                  </button>
-                </span>
+                <button type="button" role="radio" key={option} className="btn closing-checkin__option" aria-checked={after === option}
+                  tabIndex={after === option || (after === null && index === 0) ? 0 : -1}
+                  onClick={() => chooseAfter(option)}
+                  onKeyDown={event => {
+                    const next = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? (index + 1) % AFTER.length : event.key === 'ArrowUp' || event.key === 'ArrowLeft' ? (index + AFTER.length - 1) % AFTER.length : null
+                    if (next === null) return
+                    event.preventDefault()
+                    chooseAfter(AFTER[next])
+                    event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role="radio"]')[next]?.focus()
+                  }}>
+                  {option}
+                </button>
               ))}
             </div>
           </div>
