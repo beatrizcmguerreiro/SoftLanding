@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react'
-import { Companion } from '../components/Companion'
+import { Companion, type Expression } from '../components/Companion'
 import { useFocusOnMount } from '../components/useFocusOnMount'
 
 const feelings = ['Anxious', 'Overwhelmed', 'Sad', 'Unsure', 'Okay', 'Calm', 'Happy']
+const expressions: Record<string, Expression> = { Anxious: 'anxious', Overwhelmed: 'overwhelmed', Sad: 'sad', Unsure: 'unsure', Okay: 'okay', Calm: 'calm', Happy: 'happy' }
 
 export function Feeling({ value, onChange, onContinue }: { value: string; onChange: (value: string) => void; onContinue: () => void }) {
   const heading = useFocusOnMount<HTMLHeadingElement>()
@@ -17,7 +18,7 @@ export function Feeling({ value, onChange, onContinue }: { value: string; onChan
     track.current?.scrollTo({ left: index * 112, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
   }
   return <section className="feeling-screen" aria-labelledby="feeling-title">
-    <Companion />
+    <Companion expression={expressions[value] ?? 'unsure'} />
     <h1 className="title" id="feeling-title" ref={heading} tabIndex={-1}>How are you<br />feeling right now?</h1>
     <p className="feeling-caption">Select the closest match</p>
     <div className="feeling-picker">
