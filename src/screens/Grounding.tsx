@@ -2,17 +2,16 @@ import { useEffect, useRef } from 'react'
 import type { GroundingExperience } from '../../shared/grounding.mjs'
 import { Companion } from '../components/Companion'
 
-export function Grounding({ experience, originalText, onClose, step, setStep }: { experience: GroundingExperience; originalText: string; onClose: () => void; step: number; setStep: (step: number) => void }) {
+export function Grounding({ experience, onClose, step, setStep }: { experience: GroundingExperience; onClose: () => void; step: number; setStep: (step: number) => void }) {
   const invitation = useRef<HTMLHeadingElement>(null)
   const keys = ['touch', 'see', 'hear'] as const
   const done = step === keys.length
   useEffect(() => { invitation.current?.focus() }, [step])
   return (
-    <section className={`grounding-scene${done ? ' grounding-scene--done' : ''}${originalText.length > 300 ? ' grounding-scene--long' : ''}`} aria-label="A grounding moment">
+    <section className={`grounding-scene${done ? ' grounding-scene--done' : ''}`} aria-label="A grounding moment">
       <div className="scene-light" aria-hidden="true" />
-      <p className="scene-recognition">{experience.recognition}</p>
+      <p className="scene-recognition">Let’s come back to this moment, one sense at a time.</p>
       <Companion expression="attentive" />
-      {originalText && <div className="thought-cloud"><span>{originalText}</span></div>}
       <div className="invitation-stage">
         <div className="sensory-symbol" aria-hidden="true">
           <svg viewBox="0 0 80 80" fill="none">
@@ -24,7 +23,7 @@ export function Grounding({ experience, originalText, onClose, step, setStep }: 
         </h1>
         <div className="grounding-controls">
           {done ? <button className="btn btn--primary" onClick={onClose}>Close</button> : <>
-            <button className="btn btn--comfort" onClick={() => setStep(keys.length)}>I feel better</button>
+            <button className="btn btn--comfort" onClick={() => setStep(step + 1)}>I feel better</button>
             <div className="grounding-secondary">
               <button className="btn btn--secondary" onClick={() => setStep(step + 1)}>Skip</button>
             </div>
