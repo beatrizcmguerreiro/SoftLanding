@@ -167,6 +167,7 @@ textarea {
   color: var(--color-ink);
   margin: 0 0 var(--space-3);
   max-width: 320px;
+  text-wrap: balance;
 }
 
 .title--display {
@@ -189,6 +190,7 @@ textarea {
   line-height: 1.45;
   margin: 0 0 var(--space-8);
   max-width: 320px;
+  text-wrap: pretty;
 }
 
 .lead--left {
@@ -301,9 +303,9 @@ textarea {
 /* ---------- Welcome illustration ---------- */
 
 .stones {
-  width: 200px;
+  width: 112px;
   height: auto;
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-6);
 }
 
 .stones__shadow {
@@ -415,8 +417,8 @@ textarea {
 
 .regions {
   display: grid;
-  gap: var(--space-6);
-  margin-top: var(--space-6);
+  gap: var(--space-8);
+  margin-top: var(--space-8);
 }
 
 @media (min-width: 720px) {
@@ -427,27 +429,34 @@ textarea {
 }
 
 .region {
-  background: var(--color-surface-warm);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-inset);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .region--unknown {
-  background: rgba(240, 238, 255, 0.55);
+  padding-top: var(--space-8);
+  border-top: 1px solid var(--color-line);
+}
+
+@media (min-width: 720px) {
+  .region--unknown {
+    padding-top: 0;
+    border-top: 0;
+  }
 }
 
 .region__title {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin: 0 0 var(--space-5);
+  margin: 0 0 var(--space-4);
   font-family: var(--font-ui);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.01em;
-  color: var(--color-ink);
+  color: var(--color-text);
 }
 
 .region__mark {
@@ -464,13 +473,14 @@ textarea {
 
 .region__empty {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: 20px;
-  line-height: 1.25;
+  max-width: 260px;
+  font-size: 16px;
+  line-height: 1.4;
   color: var(--color-text);
 }
 
 .region__focus {
+  width: 100%;
   border-radius: var(--radius-lg);
 }
 
@@ -485,7 +495,7 @@ textarea {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .balloon-slot {
@@ -520,14 +530,14 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  max-width: 300px;
-  min-height: 96px;
-  padding: var(--space-5) var(--space-8);
+  min-width: 190px;
+  max-width: 280px;
+  min-height: 80px;
+  padding: var(--space-4) var(--space-8);
   border-radius: 58% 42% 55% 45% / 52% 48% 52% 48%;
   text-align: center;
   font-family: var(--font-display);
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1.22;
   color: var(--color-ink);
   overflow-wrap: anywhere;
@@ -615,30 +625,19 @@ button.balloon--unknown:hover {
   color: var(--color-text);
 }
 
-.balloon-actions__tip {
-  margin: 0;
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
 .microaction {
-  margin-top: var(--space-5);
-  padding: var(--space-5);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  max-width: 300px;
+  margin-top: var(--space-4);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
+  align-items: center;
+  gap: var(--space-1);
   animation: settle 520ms var(--ease-soft) both;
   animation-delay: calc(var(--i) * 90ms);
 }
 
 .microaction__eyebrow {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-muted);
 }
 
@@ -649,8 +648,24 @@ button.balloon--unknown:hover {
   color: var(--color-lavender-700);
 }
 
+.microaction__more summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  text-decoration: underline;
+  text-decoration-color: var(--color-lavender-300);
+  text-underline-offset: 4px;
+}
+
+.microaction__more[open] summary {
+  color: var(--color-text);
+}
+
 .microaction__phrase {
-  margin: var(--space-1) 0 var(--space-2);
+  margin: 0 0 var(--space-3);
   font-family: var(--font-display);
   font-size: 18px;
   line-height: 1.3;

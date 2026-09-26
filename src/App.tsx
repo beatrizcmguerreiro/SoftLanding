@@ -100,7 +100,7 @@ export default function App() {
     <div className="app">
       <header className="topbar">
         <span className="wordmark">SoftLanding</span>
-        {state !== 'human-support' && (
+        {!['welcome', 'grounding', 'human-support'].includes(state) && (
           <button type="button" className="link link--small" onClick={() => setHelpOpen(true)}>
             Help now
           </button>

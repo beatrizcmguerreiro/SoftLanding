@@ -72,17 +72,20 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
               </ul>
               {canDo.suggestion && (
                 <div className="microaction" style={{ '--i': nextIndex() } as CSSProperties}>
-                  <p className="microaction__eyebrow">If you want, when it’s possible</p>
-                  <p className="microaction__text">{canDo.suggestion}</p>
+                  <p className="microaction__text">
+                    <span className="microaction__eyebrow">If you want: </span>
+                    {canDo.suggestion}
+                  </p>
                   {phrase && (
-                    <>
+                    <details className="microaction__more">
+                      <summary>A phrase you could use</summary>
                       <p className="microaction__phrase" id="ready-phrase">
                         “{phrase}”
                       </p>
                       <button type="button" className="btn btn--soft" onClick={copyPhrase}>
-                        {copied ? 'Phrase copied' : 'Copy phrase'}
+                        {copied ? 'Copied' : 'Copy'}
                       </button>
-                    </>
+                    </details>
                   )}
                 </div>
               )}
@@ -130,10 +133,10 @@ export function Organized({ analysis, source, aiAvailable, announce, onExit }: P
 
       <p className="fineprint">
         {source === 'ai'
-          ? 'Organised by AI from your own words. It does not interpret tests.'
+          ? 'Organised by AI, using only your words.'
           : aiAvailable
-            ? 'The AI didn’t respond, so we used a simple local organisation of your words.'
-            : 'A simple local organisation of your words, without AI.'}
+            ? 'The AI didn’t respond, so this was organised on your device.'
+            : 'Organised on your device, using only your words.'}
       </p>
     </section>
   )

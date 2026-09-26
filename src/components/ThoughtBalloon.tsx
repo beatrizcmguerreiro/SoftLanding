@@ -89,9 +89,6 @@ export function ThoughtBalloon({ id, label, index, selected, setDown, onToggle, 
         <button type="button" className="btn btn--soft" onClick={onSetDown}>
           Set aside for now
         </button>
-        <p className="balloon-actions__tip" aria-hidden="true">
-          You can also drag it to the side.
-        </p>
       </div>
     </li>
   )
